@@ -26,6 +26,25 @@ enum MAGIC
 	INVALIDMAGIC // Just in case
 };
 
+enum ConsumableType
+{
+	MAGICTYPE,
+	ANTIMATTER,
+	// placeholder
+	INVALIDCONSUMABLE
+};
+
+struct Consumable
+{
+	ConsumableType type;
+	/*	So, my idea here is pretty archaic but I don't know any other way to do this
+		I'll just add for now a variable for each consumable type, which will be the 
+		consumable itself, so, even though the consumable type is MAGIC, it will have
+		a ANTIMATTER variable which will just be set to invalid.
+		I will have to consider what will happen if a consumable has multiple variables set.*/
+	MAGIC magicCard;
+};
+
 class Consumables
 {
 private:
