@@ -1,16 +1,16 @@
 #pragma once
-#include "Trinkets.hpp"
-#include "Consumables.hpp"
+#include "Trinket.hpp"
+#include "Consumable.hpp"
 #include <vector>
 
 class Player
 {
 private:
-    std::vector<Trinkets> trinketInventory;
-    std::vector<Consumables> consumableInventory;
+    std::vector<Trinket> trinketInventory;
+    std::vector<Consumable> consumableInventory;
 public:
-    std::vector<Trinkets> getTrinkets();
-    std::vector<Consumables> getConsumables();
-    std::vector<Trinkets> addTrinket();
-    std::vector<Consumables> addConsumable();
+    std::vector<Trinket> getTrinkets()const ;
+    std::vector<Consumable> getConsumables() const;
+    void addTrinket(std::vector<Trinket>);
+    void addConsumable(std::vector<Consumable>);
 };

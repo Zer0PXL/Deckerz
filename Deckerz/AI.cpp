@@ -36,7 +36,7 @@ Suit AI::determineBestSuit()
 	}
 	else
 	{
-		std::cout << "[AI.cpp] X - The AI somehow doesn't have a best suit!\n";
+		Debug::log("[AI.cpp] The AI doesn't have any playable cards.");
 		return HEARTS;
 	}
 }
@@ -129,9 +129,9 @@ void AI::playTurn(GameState& gs)
 		//		2. Basic cards with no ability
 		//		3. Draw cards (2s, 3s, Jokers)
 		//		4. Color changers (Aces)
-		//		5. No cards? Just draw.
 		// II. Second-best suit
 		//		Same order...
+		// So on until we run out of cards, then we just draw.
 		// But, then, also bypassers:
 		//		1. If Player has Macao (a single card) always play a Draw card.
 		//		2. If Player has Macao but you don't have Draw cards, always change the color.

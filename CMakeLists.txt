@@ -9,6 +9,5 @@ file(GLOB_RECURSE SOURCES
 add_executable(Deckerz ${SOURCES})
 target_compile_definitions(Deckerz PRIVATE $<$<CONFIG:Debug>:DEBUG>)
 
-find_package(SFML 2.5 COMPONENTS system window graphics network audio REQUIRED)
 target_link_libraries(Deckerz PRIVATE sfml-system sfml-window sfml-graphics sfml-network sfml-audio)
 target_include_directories(Deckerz PRIVATE src)

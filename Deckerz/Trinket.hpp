@@ -1,6 +1,6 @@
 #pragma once
 
-class Trinkets
+class Trinket
 {
 private:
 

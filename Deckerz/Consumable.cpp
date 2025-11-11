@@ -1,7 +1,10 @@
-#include "Consumables.hpp"
+#include "Consumable.hpp"
 #include "Round.hpp"
 #include "Chance.hpp"
+#include "Debug.hpp"
 #include <iostream>
+
+Consumable::Consumable(ConsumableType t, MAGIC m, ANTIMATTER am) : type(t), magicCard(m), antimatterCard(am) {}
 
 MAGIC lastUsedMAGIC = INVALIDMAGIC;
 
@@ -63,7 +66,7 @@ void setSuit(Suit suit, int i, GameState& gs)
 	}
 }
 
-void Consumables::useMAGIC(MAGIC magic, GameState& gs)
+void Consumable::useMAGIC(MAGIC magic, GameState& gs)
 {
 	std::shared_ptr<Card> firstCard;
 	std::shared_ptr<Card> secondCard;
@@ -352,5 +355,82 @@ void Consumables::useMAGIC(MAGIC magic, GameState& gs)
 
 	default:
 		std::cout << "X - That's not a real MAGIC card!";
+	}
+}
+
+std::string MAGICtoString(MAGIC card)
+{
+	switch (card)
+	{
+		case EXTRA:
+		return "\nEXTRA\n";
+		
+		case GLUETUBE:
+		return "\nGLUETUBE\n";
+
+		case LOVE:
+		return "\nLOVE\n";
+
+		case HATE:
+		return "\nHATE\n";
+
+		case RICH:
+		return "\nRICH\n";
+
+		case TREE:
+		return "\nTREE\n";
+
+		case MORE:
+		return "\nMORE\n";
+
+		case LESS:
+		return "\nLESS\n";
+
+		case SWORD:
+		return "\nSWORD\n";
+
+		case SPEAR:
+		return "\nSPEAR\n";
+
+		case PEEKABOO:
+		return "\nPEEKABOO\n";
+
+		case BLANK:
+		return "\nBLANK\n";
+
+		case LOSTCRAYON:
+		return "\nLOSTCRAYON\n";
+
+		case RIP:
+		return "\nRIP\n";
+
+		case WILDACE:
+		return "\nWILDACE\n";
+
+		case ADOLLAH:
+		return "\nADOLLAH\n";
+
+		case COINFLIP:
+		return "\nCOINFLIP\n";
+
+		case SMOKEBOMB:
+		return "\nSMOKEBOMB\n";
+
+		default:
+		return "\n!INVALID!\n";
+	}
+}
+
+void Consumable::get()
+{
+	Debug::log("[Consumable.cpp] Getting consumable...");
+
+	if (magicCard != INVALIDMAGIC)
+	{
+		std::cout << MAGICtoString(magicCard);
+	}
+	else
+	{
+		std::cout << "\nplaceholder\n";
 	}
 }
