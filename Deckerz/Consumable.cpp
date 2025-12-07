@@ -16,7 +16,8 @@ void setEnhancement(Enhancement enhancement, int i, GameState& gs)
 	for (int j = 0; j < i; j++)
 	{
 		std::cout << "What card? Give ID: ";
-		std::cin >> intInput;
+		// CLI
+		//std::cin >> intInput;
 
 		for (int i = 0; i < gs.playerHand.getSize(); i++)
 		{
@@ -46,7 +47,8 @@ void setSuit(Suit suit, int i, GameState& gs)
 	for (int j = 0; j < i; j++)
 	{
 		std::cout << "What card? Give ID: ";
-		std::cin >> intInput;
+		// CLI
+		//std::cin >> intInput;
 
 		for (int i = 0; i < gs.playerHand.getSize(); i++)
 		{
@@ -112,7 +114,8 @@ void Consumable::useMAGIC(MAGIC magic, GameState& gs)
 		for (int j = 0; j < 2; j++)
 		{
 			std::cout << "What card? Give ID: ";
-			std::cin >> intInput;
+			// CLI
+			//std::cin >> intInput;
 
 			for (int i = 0; i < gs.playerHand.getSize(); i++)
 			{
@@ -151,7 +154,8 @@ void Consumable::useMAGIC(MAGIC magic, GameState& gs)
 		for (int j = 0; j < 2; j++)
 		{
 			std::cout << "What card? Give ID: ";
-			std::cin >> intInput;
+			// CLI
+			//std::cin >> intInput;
 
 			for (int i = 0; i < gs.playerHand.getSize(); i++)
 			{
@@ -222,7 +226,8 @@ void Consumable::useMAGIC(MAGIC magic, GameState& gs)
 		while (!foundIt)
 		{
 			std::cout << "Card to transform: ";
-			std::cin >> intInput;
+			// CLI
+			//std::cin >> intInput;
 
 			for (int i = 0; i < gs.playerHand.getSize(); i++)
 			{
@@ -244,12 +249,14 @@ void Consumable::useMAGIC(MAGIC magic, GameState& gs)
 		foundIt = false;
 
 		std::cout << "Card to transform to: ";
-		std::cin >> intInput;
+		// CLI
+		//std::cin >> intInput;
 
 		while (!foundIt)
 		{
 			std::cout << "Card to transform to: ";
-			std::cin >> intInput;
+			// CLI
+			//std::cin >> intInput;
 
 			for (int i = 0; i < gs.playerHand.getSize(); i++)
 			{
@@ -277,7 +284,8 @@ void Consumable::useMAGIC(MAGIC magic, GameState& gs)
 		while (!foundIt)
 		{
 			std::cout << "Card to rip: ";
-			std::cin >> intInput;
+			// CLI
+			//std::cin >> intInput;
 			
 			for (int i = 0; i < gs.playerHand.getSize(); i++)
 			{
@@ -300,7 +308,8 @@ void Consumable::useMAGIC(MAGIC magic, GameState& gs)
 
 	case WILDACE:
 		std::cout << "What suit? (hearts, spades, diamonds, clubs) ";
-		std::cin >> stringInput;
+		// CLI
+		//std::cin >> stringInput;
 		
 		while (!foundIt)
 		{

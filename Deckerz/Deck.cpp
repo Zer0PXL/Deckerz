@@ -9,6 +9,8 @@
 
 int ucid = 0;
 
+Deck::Deck() {}
+
 std::shared_ptr<Card> Deck::draw()
 {
 	Debug::log("[Deck.cpp] Drawing a card...");
@@ -26,6 +28,17 @@ std::shared_ptr<Card> Deck::draw()
 
 Deck::Deck(Owner owner)
 {
+	// Need this for when you replay
+	Debug::log("[Deck.cpp] Are we replaying?");
+	if (cards.size() > 0)
+	{
+		Debug::log("[Deck.cpp] Replay detected! We should wipe the deck.");
+		cards.clear();
+		Debug::log("[Deck.cpp] Recreating deck!");
+	}
+	else
+		Debug::log("[Deck.cpp] Deck is empty!");
+	
 	Debug::log("[Deck.cpp] Creating deck...");
 	// Add all usual cards in deck
 	for (int s = 0; s < 4; s++)

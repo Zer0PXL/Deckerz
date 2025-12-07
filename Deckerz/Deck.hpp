@@ -14,6 +14,7 @@ private:
 public:
 	std::shared_ptr<Card> draw();
 	Deck(Owner owner);
+	Deck(); // default constructor
 	void shuffle();
 	void addCard(std::shared_ptr<Card> c);
 	int getSize();

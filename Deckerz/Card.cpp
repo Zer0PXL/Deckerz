@@ -221,7 +221,8 @@ void Card::actAbility(GameState& gs)
 			std::string stringInput;
 			Suit suitToChangeTo = HEARTS;
 			std::cout << "What suit do you want? (hearts, spades, diamonds, clubs)";
-			std::cin >> stringInput;
+			// CLI
+			//std::cin >> stringInput;
 
 			if (stringInput == "hearts") suitToChangeTo = HEARTS;
 			else if (stringInput == "spades") suitToChangeTo = SPADES;
