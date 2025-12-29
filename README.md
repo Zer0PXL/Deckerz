@@ -1,4 +1,4 @@
-# Deckerz
-### *A Macao and Balatro inspired rogue-lite.*
+# Deckerz CLI
+### *The Macao Rouge-lite in your terminal!*
 ***
-Check out the to-do board [here](https://trello.com/b/fFoQ7Jxo/my-trello-board).
+The last CLI version of Deckerz. I thought it would be a good idea to preserve it.
