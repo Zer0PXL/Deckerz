@@ -3,7 +3,7 @@
 #include <string>
 #include <cstring>
 #include <memory>
-#include "Player.hpp"
+#include "Inventory.hpp"
 #include "Card.hpp"
 #include "Hand.hpp"
 #include "Deck.hpp"

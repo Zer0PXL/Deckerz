@@ -95,8 +95,3 @@ std::vector<float> GFX::calculateHandPos(std::vector<std::shared_ptr<Card>> hand
 
     return pos;
 }
-
-void Button::pushButton()
-{
-    // Placeholder for now, because I have no idea how to animate
-}

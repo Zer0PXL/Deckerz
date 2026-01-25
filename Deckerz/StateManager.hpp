@@ -1,6 +1,6 @@
 #pragma once
 
-enum State
+enum GameState
 {
     MENU,
     PLAY,
@@ -10,10 +10,10 @@ enum State
 class StateManager
 {
 private:
-    State curState;
+    GameState curState;
     bool paused;
 public:
-    State getState();
-    void setState(State newState);
+    GameState getState();
+    void setState(GameState newState);
     bool isPaused();
 };

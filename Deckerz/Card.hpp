@@ -1,8 +1,6 @@
 #pragma once
 #include <memory>
 
-struct GameState;
-
 enum Suit
 {
 	HEARTS,

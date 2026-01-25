@@ -1,7 +1,5 @@
 #pragma once
 
-struct GameState;
-
 enum MAGIC
 {
 	EXTRA, // Bonus score for playing

@@ -3,6 +3,8 @@
 #include "Hand.hpp"
 #include <memory>
 
+class PlayState;
+
 extern bool debugMode;
 extern bool cheats;
 
@@ -14,7 +16,7 @@ private:
 public:
 	static void toggleDebugMode();
 	static void toggleCheats();
-//	static void logTurn(PlayState& ps);
+	static void logTurn(PlayState& ps);
 	static void log(std::string text1, std::string text2 = "", std::string text3 = "", std::string text4 = "", std::string text5 = "");
 	static void logCardVector(std::vector<Card>& cards);
 	static std::string abilityToString(Ability a);

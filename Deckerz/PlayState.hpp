@@ -4,7 +4,7 @@
 #include "Hand.hpp"
 #include "Table.hpp"
 #include "AI.hpp"
-#include "Player.hpp"
+#include "Inventory.hpp"
 #include <memory>
 
 enum Turn
@@ -45,12 +45,12 @@ class PlayState
 private:
 	Deck playerDeck;
 	Deck aiDeck;
+	Inventory inventory;
 	Hand playerHand;
 	Hand aiHand;
 	Table pile;
 	Turn turn;
 	GameOver gameOver;
-	Player player;
 	AI ai;
 	int score;
 	Bonuses bonuses;
@@ -71,12 +71,19 @@ public:
 	Table& getPile();
 	Turn& getTurn();
 	GameOver& getGO();
-	Player& getPlayer();
+	Inventory& getInventory();
 	AI& getAI();
 	int& getScore();
 	Bonuses& getBonuses();
 	Variables& getVars();
 
-	void pDraw();
+	void actAbility(std::shared_ptr<Card> card);
+	void actEnhancement(std::shared_ptr<Card> card);
+
+	void playerDraw();
+	void playerPlay(const std::vector<std::shared_ptr<Card>> cards);
+
+	void aiPlay(const std::vector<std::shared_ptr<Card>> cards);
+	void aiTurn();
 };
 

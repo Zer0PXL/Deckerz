@@ -10,7 +10,7 @@
 #include "Debug.hpp"
 #include "AI.hpp"
 #include "Consumable.hpp"
-#include "Player.hpp"
+#include "Inventory.hpp"
 #include <memory>
 #include "GFX.hpp"
 #include "Button.hpp"
@@ -80,7 +80,7 @@ int main()
 			if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
 			{
 				if (keyPressed->scancode == sf::Keyboard::Scancode::D)
-					ps.pDraw();
+					ps.playerDraw();
 			}
 
 			if (const auto* mbPressed = event->getIf<sf::Event::MouseButtonPressed>())

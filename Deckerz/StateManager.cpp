@@ -1,8 +1,8 @@
 #include "StateManager.hpp"
 
-State StateManager::getState() { return curState; }
+GameState StateManager::getState() { return curState; }
 
-void StateManager::setState(State newState)
+void StateManager::setState(GameState newState)
 {
     curState = newState;
 }

@@ -17,7 +17,7 @@ void Debug::toggleDebugMode()
 	}
 }
 
-/*void Debug::logTurn(PlayState& ps)
+void Debug::logTurn(PlayState& ps)
 {
 	if (ps.getTurn() == PLAYERTURN)
 	{
@@ -37,16 +37,16 @@ void Debug::toggleDebugMode()
 	if (cheats)
 	{
 		std::cout << "AI hand:\n";
-		for (int i = 0; i < ps.getAHand().getHand().size(); i++)
+		for (int i = 0; i < ps.getAIHand().getHand().size(); i++)
 		{
-			ps.getAHand().getHand()[i]->print();
+			ps.getAIHand().getHand()[i]->print();
 		}
 
 		std::cout << "\n";
 	}
 	else
 	{
-		std::cout << "AI has " << ps.getAHand().getSize() << " cards.\n";
+		std::cout << "AI has " << ps.getAIHand().getSize() << " cards.\n";
 
 		std::cout << "\n";
 	}
@@ -59,7 +59,7 @@ void Debug::toggleDebugMode()
 
 	std::cout << "\n";
 }
-*/
+
 void Debug::log(std::string text1, std::string text2, std::string text3, std::string text4, std::string text5)
 {
 	if (debugMode) std::cout << text1 << text2 << text3 << text4 << text5 << std::endl;

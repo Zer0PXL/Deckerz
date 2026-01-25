@@ -3,14 +3,12 @@
 #include "Consumable.hpp"
 #include <vector>
 
-class Player
+class Inventory
 {
 private:
     std::vector<Trinket> trinketInventory;
     std::vector<Consumable> consumableInventory;
 public:
-    //void playTurn(PlayState& ps); // CLI bullshit, will be removed
-
     std::vector<Trinket> getTrinkets()const ;
     std::vector<Consumable> getConsumables() const;
     void addTrinket(std::vector<Trinket>);
