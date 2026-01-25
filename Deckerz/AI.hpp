@@ -3,12 +3,12 @@
 #include <vector>
 #include <memory>
 
-enum Difficulty
+enum class Difficulty
 {
-	NOAI,
-	DUMB,
-	SMART,
-	UNFAIR
+	NoAI,
+	Dumb,
+	Smart,
+	Unfair
 };
 
 class AI
@@ -21,7 +21,7 @@ private:
 	std::vector<std::shared_ptr<Card>> bestSuit;
 
 	bool smoked = false;
-	Difficulty difficulty = SMART;
+	Difficulty difficulty = Difficulty::Smart;
 public:
 	void changeDifficulty(Difficulty difficulty);
 	Suit determineBestSuit();

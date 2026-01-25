@@ -7,6 +7,9 @@
 #include <iostream>
 #include <chrono>
 
+// This is the Universal Card ID. This single number makes sure that no card is repeated,
+// because if a single card has the same ID as another, everything goes to SHIT.
+// It probably shouldn't be an interger, I will probably make it a long in the future.
 int ucid = 0;
 
 Deck::Deck() {}

@@ -1,17 +1,17 @@
 #pragma once
 
-enum GameState
+enum class GameState
 {
-    MENU,
-    PLAY,
-    SHOP
+    Menu,
+    Play,
+    Shop
 };
 
 class StateManager
 {
 private:
     GameState curState;
-    bool paused;
+    bool paused = false;
 public:
     GameState getState();
     void setState(GameState newState);

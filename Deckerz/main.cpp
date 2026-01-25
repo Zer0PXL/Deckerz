@@ -25,15 +25,6 @@ bool debugMode = false;
 bool cheats = false;
 #endif
 
-/*enum Choice
-{
-	PLAY,
-	PLAYMULTI,
-	DRAW,
-	INVALID,
-	BYPASS
-};*/
-
 constexpr auto PLAYBTN = "play";
 constexpr auto DRAWBTN = "draw";
 
@@ -56,10 +47,14 @@ int main()
 	std::unordered_map<int, MiddleCard> middleCards; // Uses UCID as a key
 	vector<MiddleCard> selectedCards;
 	CardState state;
-	CardState pileState; pileState.selectable = false;
+	CardState pileState; pileState.selectable = false; // The pile isn't selectable for obvious reasons.
 
 	// Buttons
 	vector<Button> buttons;
+
+	// State Manager
+	StateManager stateMan;
+	stateMan.setState(GameState::Play); // temporary
 
 	// PlayState
 	PlayState ps;
@@ -127,6 +122,7 @@ int main()
 			GFX::drawCard(mC, window);
 		}
 
+		// Iterate over every button and draw it
 		for (auto& button : buttons)
 		{
 			

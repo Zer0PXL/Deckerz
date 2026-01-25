@@ -7,27 +7,11 @@
 #include "Inventory.hpp"
 #include <memory>
 
-enum Turn
-{
-	PLAYERTURN,
-	AITURN
-};
+enum class Turn { Player, AI };
 
-enum GameOver
-{
-	NOTOVER,
-	PLAYERWIN,
-	AIWIN,
-	NOPLAYERDECK,
-	NOAIDECK
-};
+enum class GameOver { NotOver, PlayerWin, AIWin, NoPlayerDeck, NoAIDeck };
 
-struct Variables
-{
-	int draws = 0;
-	int attacks = 0;
-	int skips = 0;
-};
+struct Variables { int draws = 0; int attacks = 0; int skips = 0; };
 
 struct Bonuses
 {
@@ -58,7 +42,7 @@ private:
 public:
 	PlayState();
 	
-	GameOver isGameOver();
+	void isGameOver();
 	void endRound();
 	void switchTurn();
 	void calculateBonuses();

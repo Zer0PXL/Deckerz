@@ -7,7 +7,7 @@
 Consumable::Consumable(ConsumableType t, MAGIC m, ANTIMATTER am) : type(t), magicCard(m), antimatterCard(am) {}
 
 MAGIC lastUsedMAGIC = INVALIDMAGIC;
-
+/*
 void setEnhancement(Enhancement enhancement, int i, PlayState& ps)
 {
 	int intInput = 0;
@@ -67,7 +67,7 @@ void setSuit(Suit suit, int i, PlayState& ps)
 		}
 	}
 }
-
+*/
 /*void Consumable::useMAGIC(MAGIC magic, PlayState& ps)
 {
 	std::shared_ptr<Card> firstCard;
@@ -367,7 +367,8 @@ void setSuit(Suit suit, int i, PlayState& ps)
 	}
 }
 */
-std::string MAGICtoString(MAGIC card)
+
+/*std::string MAGICtoString(MAGIC card)
 {
 	switch (card)
 	{
@@ -443,3 +444,4 @@ void Consumable::get()
 		std::cout << "\nplaceholder\n";
 	}
 }
+*/

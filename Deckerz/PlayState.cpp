@@ -5,8 +5,7 @@
 #include "Chance.hpp"
 #include "Debug.hpp"
 
-
-PlayState::PlayState() : playerDeck(PLAYER), aiDeck(OWNERAI), gameOver(NOTOVER), score(0)
+PlayState::PlayState() : playerDeck(PLAYER), aiDeck(OWNERAI), gameOver(GameOver::NotOver), score(0)
 {
 	Debug::log("[PlayState.cpp] Starting PlayState...");
 
@@ -17,7 +16,7 @@ PlayState::PlayState() : playerDeck(PLAYER), aiDeck(OWNERAI), gameOver(NOTOVER),
 	// Each player draws 5 cards
 	if (playerDeck.getSize() < 1)
 	{
-		gameOver = NOPLAYERDECK;
+		gameOver = GameOver::NoPlayerDeck;
 	}
 	for (int i = 1; i <= 5; i++)
 	{
@@ -26,130 +25,32 @@ PlayState::PlayState() : playerDeck(PLAYER), aiDeck(OWNERAI), gameOver(NOTOVER),
 	}
 
 	// Flip a coin to determine first-goer
-	if (Chance::chance(1, 2) == 1) turn = PLAYERTURN;
-	else turn = AITURN;
+	if (Chance::chance(1, 2) == 1) turn = Turn::Player;
+	else turn = Turn::AI;
 
 	// Draw a card to the pile
 	Debug::log("[PlayState.cpp] Drawing a card from the loser's deck...");
-	if (turn == PLAYERTURN) pile.addCard(aiDeck.draw());
+	if (turn == Turn::Player) pile.addCard(aiDeck.draw());
 	else pile.addCard(playerDeck.draw());
 }
 
-// Deprecated
-// Turn PlayState::playTurn(Turn& turn)
-/*{
-	if (turn) Debug::log("[PlayState.cpp] It's the AI's turn");
-	else Debug::log("[PlayState.cpp] It's the Player's turn");
-
-	//std::vector<Card>& hand = (turn == PLAYERTURN) ? pHand.getHand() : aHand.getHand();
-	const std::vector<std::shared_ptr<Card>>& hand = aHand.getHand();
-	std::vector<std::shared_ptr<Card>> playable;
-	std::vector<std::shared_ptr<Card>> multiPlayable;
-	std::shared_ptr<Card> topCard = pile.getCard();
-
-	// Check for playable cards
-	for (int i = 0; i < hand.size(); i++)
-	{
-		if (topCard->getRank() == -1) playable.push_back(hand[i]); // When a Joker is down, you can play whatever you want
-		if (topCard->getRank() == hand[i]->getRank()) playable.push_back(hand[i]); // By rank
-		if (topCard->getSuit() == hand[i]->getSuit()) playable.push_back(hand[i]); // By suit
-		if (hand[i]->getRank() == -1) playable.push_back(hand[i]); // Jokers are always playable
-	}
-
-	// Old debugging AI
-	if (turn == PLAYERTURN)
-	{
-		// Old Player-AI debugging thing
-		if (topCard.getRank() == -1)
-		{
-			pile.addCard(pHand.playCard(playable[0])); // If there's a Joker down, though, you can't play your whole goddamn hand...
-		}
-		else if (playable.size() < 1)
-		{
-			// Check for deck
-			if (pDeck.getSize() == 0)
-			{
-				gameOver = NOPLAYERDECK;
-			}
-			else pHand.addCard(pDeck.draw());
-		}
-		else if (playable.size() == 1) pile.addCard(pHand.playCard(playable[0]));
-		else if (playable.size() > 1)
-		{
-			int baseRank = playable[0].getRank();
-			for (int i = 0; i < playable.size(); i++)
-			{
-				if (playable[i].getRank() == baseRank) multiPlayable.push_back(playable[i]);
-			}
-			pile.addMultiCard(pHand.playMultiCard(multiPlayable));
-		}
-
-		return AITURN;
-	}
-	else
-	{
-		std::shared_ptr<Card> temporaryCard = std::make_shared<Card>(0, 0, 0, NONE, BASIC);
-		std::vector<std::shared_ptr<Card>> temporaryCards;
-
-		if (playable.size() < 1)
-		{
-			// Check for deck
-			if (aDeck.getSize() == 0)
-			{
-				gameOver = NOAIDECK;
-			}
-			else
-			{
-				aHand.addCard(aDeck.draw());
-				turn = PLAYERTURN;
-			}
-		}
-		else if (playable.size() == 1) 
-		{
-			temporaryCard = playable[0];
-			pile.addCard(aHand.playCard(playable[0]));
-            turn = temporaryCard->actAbility(pHand, aHand, pDeck, aDeck, pile, turn);
-		}
-		else if (playable.size() > 1) 
-		{
-			for (int i = 0; i < playable.size(); i++)
-			{
-				if (playable[0]->getRank() == playable[i]->getRank())
-				{
-					temporaryCards.push_back(playable[i]);
-				}
-			}
-			pile.addMultiCard(aHand.playMultiCard(playable));
-			for (int i = 0; i < temporaryCards.size(); i++)
-			{
-				turn = temporaryCards[i]->actAbility(pHand, aHand, pDeck, aDeck, pile, turn);
-			}
-		}
-
-		Debug::log("[PlayState.cpp] AI's turn is over.");
-
-		return turn;
-	}
-}*/
-
-GameOver PlayState::isGameOver()
+void PlayState::isGameOver()
 {	
-	if (gameOver == NOTOVER)
+	if (gameOver == GameOver::NotOver)
 	{
 		if (playerHand.getHand().size() == 0)
 		{
-			return PLAYERWIN;
+			gameOver = GameOver::PlayerWin;
 		}
 		else if (aiHand.getHand().size() == 0)
 		{
-			return AIWIN;
+			gameOver = GameOver::AIWin;
 		}
 		else
 		{
-			return NOTOVER;
+			gameOver = GameOver::NotOver;
 		}
 	}
-	else return gameOver;
 }
 
 void PlayState::endRound()
@@ -194,8 +95,8 @@ void PlayState::endRound()
 
 void PlayState::switchTurn()
 {
-	if (turn == PLAYERTURN) turn = AITURN;
-	else turn = PLAYERTURN;
+	if (turn == Turn::Player) turn = Turn::AI;
+	else turn = Turn::Player;
 }
 
 void PlayState::calculateBonuses()
@@ -218,7 +119,7 @@ void PlayState::calculateBonuses()
 		std::cout << "+ " << variables.attacks * 10 << " - Attack cards\n";
 	}
 
-	if (gameOver == PLAYERWIN || gameOver == NOAIDECK)
+	if (gameOver == GameOver::PlayerWin || gameOver == GameOver::NoAIDeck)
 	{
 		score += 100;
 		std::cout << "+ 100 - Won!\n";
@@ -300,8 +201,8 @@ void PlayState::actAbility(std::shared_ptr<Card> card)
 	{
 	case DRAWABILITY:
 		Debug::log("[Card.cpp] DRAWABILITY");
-        if (card->getRank() == 2 || card->getEnhancement() == SPEAREN)
-        {
+		if (card->getRank() == 2 || card->getEnhancement() == SPEAREN)
+		{
 			for (int i = 1; i <= 2; i++)
 			{
 				if (targetDeck->getSize() > 0)
@@ -313,14 +214,14 @@ void PlayState::actAbility(std::shared_ptr<Card> card)
 				{
 					if (card->getOwner() == OWNERAI)
 					{
-						gameOver = NOPLAYERDECK;
+						gameOver = GameOver::NoPlayerDeck;
 					}
-					else gameOver = NOAIDECK;
+					else gameOver = GameOver::NoAIDeck;
 				}
 			}
-        }
-        else if (card->getRank() == 3)
-        {
+		}
+		else if (card->getRank() == 3)
+		{
 			for (int i = 1; i <= 3; i++)
 			{
 				if (targetDeck->getSize() > 0)
@@ -332,14 +233,14 @@ void PlayState::actAbility(std::shared_ptr<Card> card)
 				{
 					if (card->getOwner() == OWNERAI)
 					{
-						gameOver = NOPLAYERDECK;
+						gameOver = GameOver::NoPlayerDeck;
 					}
-					else gameOver = NOAIDECK;
+					else gameOver = GameOver::NoAIDeck;
 				}
 			}
-        }
-        else if (card->getRank() == -1)
-        {
+		}
+		else if (card->getRank() == -1)
+		{
 			for (int i = 1; i <= 5; i++)
 			{
 				if (targetDeck->getSize() > 0)
@@ -351,12 +252,12 @@ void PlayState::actAbility(std::shared_ptr<Card> card)
 				{
 					if (card->getOwner() == OWNERAI)
 					{
-						gameOver = NOPLAYERDECK;
+						gameOver = GameOver::NoPlayerDeck;
 					}
-					else gameOver = NOAIDECK;
+					else gameOver = GameOver::NoAIDeck;
 				}
 			}
-        }
+		}
 		else if (card->getEnhancement() == SWORDEN)
 		{
 			if (targetDeck->getSize() > 0)
@@ -368,22 +269,22 @@ void PlayState::actAbility(std::shared_ptr<Card> card)
 			{
 				if (card->getOwner() == OWNERAI)
 				{
-					gameOver = NOPLAYERDECK;
+					gameOver = GameOver::NoPlayerDeck;
 				}
-				else gameOver = NOAIDECK;
+				else gameOver = GameOver::NoAIDeck;
 			}
 		}
-        else
+		else
 		{
 			std::cout << "X - Invalid card for DRAWABILITY (how!?!)\n";
-        }
+		}
 
 		if (card->getOwner() == PLAYER) 
 		{
 			Debug::log("i - The Player should be next, since they played a draw card.");
-			turn = PLAYERTURN;
+			turn = Turn::Player;
 		}
-		else turn = AITURN;
+		else turn = Turn::AI;
 		break;
 	case COLOR:
 		Debug::log("[Card.cpp] COLOR");
@@ -405,7 +306,7 @@ void PlayState::actAbility(std::shared_ptr<Card> card)
 		}
 		else
 		{
-			if (ai.getDifficulty() == DUMB)
+			if (ai.getDifficulty() == Difficulty::Dumb)
 			{
 				int randomChance = Chance::chance(0, 3);
 				Suit randomSuit;
@@ -430,7 +331,7 @@ void PlayState::actAbility(std::shared_ptr<Card> card)
 				}
 				pile.addCard(std::make_shared<Card>(1, randomSuit, 0, NOOWNER, BASIC, NONE));
 			}
-			else if (ai.getDifficulty() == SMART)
+			else if (ai.getDifficulty() == Difficulty::Smart)
 			{
 				Suit suitToChangeTo;
 				switch (ai.determineBestSuit())
@@ -460,9 +361,9 @@ void PlayState::actAbility(std::shared_ptr<Card> card)
 		Debug::log("[Card.cpp] SKIP");
 		if (card->getOwner() == PLAYER)
 		{
-			turn = PLAYERTURN;
+			turn = Turn::Player;
 		}
-		else if (card->getOwner() == OWNERAI) turn = AITURN;
+		else if (card->getOwner() == OWNERAI) turn = Turn::AI;
 		else std::cout << "[PlayState.cpp] X - uh... SKIP ability called by invalid card with no owner?\n";
 		break;
 	default:
@@ -482,7 +383,7 @@ void PlayState::playerDraw()
 	}
 	else
 	{
-		gameOver = NOPLAYERDECK;
+		gameOver = GameOver::NoPlayerDeck;
 	}
 }
 
@@ -543,7 +444,7 @@ void PlayState::playerPlay(const std::vector<std::shared_ptr<Card>> cards)
 		else
 		{
 			std::cout << "Not playable!\n";
-			if (turn == AITURN) turn = PLAYERTURN;
+			if (turn == Turn::AI) turn = Turn::Player;
 		}
 	}
 
@@ -616,14 +517,14 @@ void PlayState::aiPlay(const std::vector<std::shared_ptr<Card>> cards)
 
 	for (int i = toPlay.size() - 1; i >= 0; i--)
 	{
-		playerHand.removeCard(toPlay[i]);
+		aiHand.removeCard(toPlay[i]);
 	}
 }
 
 void PlayState::aiTurn()
 {
-	std::cout << "============================\n" << "[AI.cpp] The AI is thinking...\n" << "============================\n";
-	if (turn != AITURN) std::cout << "[AI.cpp] X - It's not the AI's turn, but somehow, it's playing???\n";
+	std::cout << "============================\n" << "The AI is thinking...\n" << "============================\n";
+	if (turn != Turn::AI) std::cout << "[AI.cpp] X - It's not the AI's turn, but somehow, it's playing???\n";
 	
 	bonuses.oneManShow = false;
 	bonuses.oneShotWonder = false;
@@ -634,18 +535,20 @@ void PlayState::aiTurn()
 	{
 		std::cout << "*cough cough*\n";
 		ai.smokeBomb();
-		turn = PLAYERTURN;
+		turn = Turn::Player;
 		std::cout << "============================\n" << "AI's turn is over\n" << "============================\n";
 		return;
 	}
 
-	if (ai.getDifficulty() == NOAI)
+	// Purely for debug purposes
+	// Just plays the first legal card(s), if it can't play anything, just draw.
+	if (ai.getDifficulty() == Difficulty::NoAI)
 	{
 		std::cout << "Nevermind! It's off!\n";
 	}
-	else if (ai.getDifficulty() == DUMB)
+	// Easy mode.
+	else if (ai.getDifficulty() == Difficulty::Dumb)
 	{
-		// Just plays the first legal card(s), if it can't play anything, just draw.
 		const std::vector<std::shared_ptr<Card>>& hand = aiHand.getHand();
 		std::vector<std::shared_ptr<Card>> playable;
 		std::vector<std::shared_ptr<Card>> multiPlayable;
@@ -668,12 +571,12 @@ void PlayState::aiTurn()
 			// Check for deck
 			if (aiDeck.getSize() == 0)
 			{
-				gameOver = NOAIDECK;
+				gameOver = GameOver::NoAIDeck;
 			}
 			else
 			{
 				aiHand.addCard(aiDeck.draw());
-				turn = PLAYERTURN;
+				turn = Turn::Player;
 			}
 		}
 		else
@@ -683,7 +586,7 @@ void PlayState::aiTurn()
 			actAbility(temporaryCard);
 		}
 	}
-	else if (ai.getDifficulty() == SMART)
+	else if (ai.getDifficulty() == Difficulty::Smart)
 	{
 		// Priority queue-based gameplay.
 		// Gathers the legal cards into multiple vectors and plays what's best.
@@ -829,7 +732,7 @@ void PlayState::aiTurn()
 			}
 			else
 			{
-				gameOver = NOAIDECK;
+				gameOver = GameOver::NoAIDeck;
 			}
 		}
 
@@ -839,9 +742,9 @@ void PlayState::aiTurn()
 		drawCards.clear();
 		colorCards.clear();
 	}
-	else if (ai.getDifficulty() == UNFAIR)
+	else if (ai.getDifficulty() == Difficulty::Unfair)
 	{
-		gameOver = AIWIN;
+		gameOver = GameOver::AIWin;
 	}
 
 	std::cout << "============================\n" << "AI's turn is over\n" << "============================\n";

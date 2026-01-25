@@ -16,9 +16,8 @@ private:
 public:
 	static void toggleDebugMode();
 	static void toggleCheats();
-	static void logTurn(PlayState& ps);
 	static void log(std::string text1, std::string text2 = "", std::string text3 = "", std::string text4 = "", std::string text5 = "");
-	static void logCardVector(std::vector<Card>& cards);
+	static void logCardVector(std::vector<std::shared_ptr<Card>>& cards);
 	static std::string abilityToString(Ability a);
 	static std::string enhancementToString(Enhancement e);
 };
