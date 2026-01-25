@@ -31,28 +31,18 @@ enum ANTIMATTER
 	INVALIDANTIMATTER
 };
 
+enum BLACKMARKET
+{
+	INVALIDBLACKMARKET
+};
+
 enum ConsumableType
 {
 	MAGICTYPE,
 	ANTIMATTERTYPE,
-	// placeholder
+	BLACKMARKETTYPE,
 	INVALIDCONSUMABLE
 };
-
-// Why was I doing this? Am I stupid? (yes, yes, i am)
-/*struct Consumable
-{
-	ConsumableType type;
-		So, my idea here is pretty archaic but I don't know any other way to do this
-		I'll just add for now a variable for each consumable type, which will be the 
-		consumable itself, so, even though the consumable type is MAGIC, it will have
-		a ANTIMATTER variable which will just be set to invalid.
-		I will have to consider what will happen if a consumable has multiple variables set.
-
-	// So, all that up there? You read all that? Good, it's getting deleted.
-	MAGIC magicCard;
-};
-*/
 
 class Consumable
 {
@@ -60,7 +50,7 @@ private:
 	ConsumableType type;
 	MAGIC magicCard;
 	ANTIMATTER antimatterCard;
-	// PLACEHOLDER placeholder
+	BLACKMARKET blackmarketDisk;
 public:
 	Consumable(ConsumableType t, MAGIC m, ANTIMATTER am);
 
@@ -68,6 +58,6 @@ public:
 	void get();
 
 	// This is getting removed soon...
-	static void useMAGIC(MAGIC magic, GameState& gs);
+//	static void useMAGIC(MAGIC magic, PlayState& ps);
 };
 

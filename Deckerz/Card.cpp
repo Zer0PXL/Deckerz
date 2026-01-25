@@ -1,7 +1,7 @@
 #include "Card.hpp"
 #include "Debug.hpp"
 #include "Chance.hpp"
-#include "Round.hpp"
+#include "PlayState.hpp"
 #include <iostream>
 #include <string>
 
@@ -114,15 +114,15 @@ void Card::setAbility(Ability a)
 	ability = a;
 }
 
-void Card::actAbility(GameState& gs)
+/*void Card::actAbility(PlayState& ps)
 {
-	Hand* targetHand = &gs.playerHand;
-	Deck* targetDeck = &gs.playerDeck;
+	Hand* targetHand = &ps.getPHand();
+	Deck* targetDeck = &ps.playerDeck;
 	
 	if (owner == PLAYER)
 	{
-		targetHand = &gs.aiHand;
-		targetDeck = &gs.aiDeck;
+		targetHand = &ps.getAHand();
+		targetDeck = &ps.getADeck();
 	}
 
 	switch (ability)
@@ -136,15 +136,15 @@ void Card::actAbility(GameState& gs)
 				if (targetDeck->getSize() > 0)
 				{
 					targetHand->addCard(targetDeck->draw());
-					if (owner == PLAYER) gs.variables.attacks++;
+					if (owner == PLAYER) ps.variables.attacks++;
 				}
 				else
 				{
 					if (owner == OWNERAI)
 					{
-						gs.gameOver = NOPLAYERDECK;
+						ps.getGO() = NOPLAYERDECK;
 					}
-					else gs.gameOver = NOAIDECK;
+					else ps.getGO() = NOAIDECK;
 				}
 			}
         }
@@ -155,15 +155,15 @@ void Card::actAbility(GameState& gs)
 				if (targetDeck->getSize() > 0)
 				{
 					 targetHand->addCard(targetDeck->draw());
-					 if (owner == PLAYER) gs.variables.attacks++;
+					 if (owner == PLAYER) ps.variables.attacks++;
 				}
 				else
 				{
 					if (owner == OWNERAI)
 					{
-						gs.gameOver = NOPLAYERDECK;
+						ps.getGO() = NOPLAYERDECK;
 					}
-					else gs.gameOver = NOAIDECK;
+					else ps.getGO() = NOAIDECK;
 				}
 			}
         }
@@ -174,15 +174,15 @@ void Card::actAbility(GameState& gs)
 				if (targetDeck->getSize() > 0)
 				{
 					targetHand->addCard(targetDeck->draw());
-					if (owner == PLAYER) gs.variables.attacks++;
+					if (owner == PLAYER) ps.variables.attacks++;
 				}
 				else
 				{
 					if (owner == OWNERAI)
 					{
-						gs.gameOver = NOPLAYERDECK;
+						ps.getGO() = NOPLAYERDECK;
 					}
-					else gs.gameOver = NOAIDECK;
+					else ps.getGO() = NOAIDECK;
 				}
 			}
         }
@@ -191,15 +191,15 @@ void Card::actAbility(GameState& gs)
 			if (targetDeck->getSize() > 0)
 			{
 				targetHand->addCard(targetDeck->draw());
-				if (owner == PLAYER) gs.variables.attacks++;
+				if (owner == PLAYER) ps.variables.attacks++;
 			}
 			else
 			{
 				if (owner == OWNERAI)
 				{
-					gs.gameOver = NOPLAYERDECK;
+					ps.getGO() = NOPLAYERDECK;
 				}
-				else gs.gameOver = NOAIDECK;
+				else ps.getGO() = NOAIDECK;
 			}
 		}
         else
@@ -210,9 +210,9 @@ void Card::actAbility(GameState& gs)
 		if (owner == PLAYER) 
 		{
 			Debug::log("i - The Player should be next, since they played a draw card.");
-			gs.turn = PLAYERTURN;
+			ps.getTurn() = PLAYERTURN;
 		}
-		else gs.turn = AITURN;
+		else ps.getTurn() = AITURN;
 		break;
 	case COLOR:
 		Debug::log("[Card.cpp] COLOR");
@@ -230,11 +230,11 @@ void Card::actAbility(GameState& gs)
 			else if (stringInput == "clubs") suitToChangeTo = CLUBS;
 			else std::cout << "That's not a suit!";
 
-			gs.pile.addCard(std::make_shared<Card>(1, suitToChangeTo, 0, NOOWNER, BASIC, NONE));
+			ps.getPile().addCard(std::make_shared<Card>(1, suitToChangeTo, 0, NOOWNER, BASIC, NONE));
 		}
 		else
 		{
-			if (gs.ai.getDifficulty() == DUMB)
+			if (ps.ai.getDifficulty() == DUMB)
 			{
 				int randomChance = Chance::chance(0, 3);
 				Suit randomSuit;
@@ -257,12 +257,12 @@ void Card::actAbility(GameState& gs)
 					std::cout << "X - Random chance broken???\n";
 					break;
 				}
-				gs.pile.addCard(std::make_shared<Card>(1, randomSuit, 0, NOOWNER, BASIC, NONE));
+				ps.getPile().addCard(std::make_shared<Card>(1, randomSuit, 0, NOOWNER, BASIC, NONE));
 			}
-			else if (gs.ai.getDifficulty() == SMART)
+			else if (ps.ai.getDifficulty() == SMART)
 			{
 				Suit suitToChangeTo;
-				switch (gs.ai.determineBestSuit())
+				switch (ps.ai.determineBestSuit())
 				{
 				case HEARTS:
 					suitToChangeTo = HEARTS;
@@ -281,7 +281,7 @@ void Card::actAbility(GameState& gs)
 					std::cout << "X - Invalid best suit!\n";
 					break;
 				}
-				gs.pile.addCard(std::make_shared<Card>(1, suitToChangeTo, 0, NOOWNER, BASIC, NONE));
+				ps.getPile().addCard(std::make_shared<Card>(1, suitToChangeTo, 0, NOOWNER, BASIC, NONE));
 			}
 		}
 		break;
@@ -289,10 +289,10 @@ void Card::actAbility(GameState& gs)
 		Debug::log("[Card.cpp] SKIP");
 		if (owner == PLAYER)
 		{
-			gs.turn = PLAYERTURN;
-			//gs.score += 50;
+			ps.getTurn() = PLAYERTURN;
+			//ps.score += 50;
 		}
-		else if (owner == OWNERAI) gs.turn = AITURN;
+		else if (owner == OWNERAI) ps.getTurn() = AITURN;
 		else std::cout << "X - uh... SKIP ability called by invalid card with no owner?\n";
 		break;
 	default:
@@ -301,7 +301,7 @@ void Card::actAbility(GameState& gs)
 		break;
 	}
 }
-
+*/
 Suit Card::intToSuit(int interger)
 {
 	switch (interger)
@@ -335,23 +335,23 @@ void Card::setEnhancement(Enhancement e)
 	enhancement = e;
 }
 
-void Card::actEnhancement(GameState& gs)
+/*void Card::actEnhancement(PlayState& ps)
 {
 	int randomCard;
 	
 	switch (enhancement)
 	{
 		case EXTRAEN:
-			gs.score += 10;
+			ps.score += 10;
 			std::cout << "+ 10!\n";
 			break;
 		
 		case STICKY:
-			randomCard = Chance::chance(0, gs.playerHand.getSize());
-			gs.playerHand.playCards({gs.playerHand.getHand()[randomCard]}, gs);
+			randomCard = Chance::chance(0, ps.getPHand().getSize());
+			ps.getPHand().playCards({ps.getPHand().getHand()[randomCard]}, gs);
 	}	
 }
-
+*/
 void Card::setID(int newID)
 {
 	id = newID;

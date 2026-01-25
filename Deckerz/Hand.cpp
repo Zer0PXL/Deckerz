@@ -1,7 +1,7 @@
 #include "Hand.hpp"
 #include "Card.hpp"
 #include "Debug.hpp"
-#include "Round.hpp"
+#include "PlayState.hpp"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -54,7 +54,7 @@ std::shared_ptr<Card> Hand::playCard(const std::shared_ptr<Card> card)
 	}
 }
 
-void Hand::playCards(const std::vector<std::shared_ptr<Card>> cards, GameState& gs)
+/*void Hand::playCards(const std::vector<std::shared_ptr<Card>> cards, PlayState& ps)
 {
 	std::vector<std::shared_ptr<Card>> toPlay;
 	std::vector<int> toBeDeleted;
@@ -90,7 +90,7 @@ void Hand::playCards(const std::vector<std::shared_ptr<Card>> cards, GameState& 
 		}
 	}
 
-	std::shared_ptr<Card> currentTop = gs.pile.getCard();
+	std::shared_ptr<Card> currentTop = ps.getPile().getCard();
 
 	for (int i = 0; i < toPlay.size(); i++)
 	{
@@ -101,19 +101,19 @@ void Hand::playCards(const std::vector<std::shared_ptr<Card>> cards, GameState& 
 		{
 			if (!(toPlay[i]->getAbility() == COLOR))
 			{
-				gs.pile.addCard(toPlay[i]);
+				ps.getPile().addCard(toPlay[i]);
 			}
-			if (toPlay[i]->getAbility() == COLOR && !(gs.pile.getCard()->getOwner() == NOOWNER))
+			if (toPlay[i]->getAbility() == COLOR && !(ps.getPile().getCard()->getOwner() == NOOWNER))
 			{
-				gs.pile.addCard(toPlay[i]);
+				ps.getPile().addCard(toPlay[i]);
 			}
 			std::cout << "Played: "; toPlay[i]->print(); std::cout << "\n";
-			currentTop = gs.pile.getCard();
+			currentTop = ps.getPile().getCard();
 		}
 		else
 		{
 			std::cout << "Not playable!\n";
-			if (gs.turn == AITURN) gs.turn = PLAYERTURN;
+			if (ps.getTurn() == AITURN) ps.getTurn() = PLAYERTURN;
 		}
 	}
 
@@ -122,7 +122,7 @@ void Hand::playCards(const std::vector<std::shared_ptr<Card>> cards, GameState& 
 		hand.erase(hand.begin() + toBeDeleted[i]);
 	}
 }
-
+*/
 int Hand::getSize()
 {
 	return hand.size();

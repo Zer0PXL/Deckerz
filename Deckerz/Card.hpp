@@ -61,10 +61,10 @@ public:
 	Ability getAbility() const;
 	void setAbility(Ability a);
 	static bool isPlayable(std::shared_ptr<Card> cardToPlay, std::shared_ptr<Card> pileCard);
-	void actAbility(GameState& gs);
+//	void actAbility(PlayState& ps);
 	static Suit intToSuit(int interger);
 	Enhancement getEnhancement();
 	void setEnhancement(Enhancement e);
-	void actEnhancement(GameState& gs);
+//	void actEnhancement(PlayState& ps);
 	void resetAbility();
 };

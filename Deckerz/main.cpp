@@ -6,13 +6,14 @@
 #include "Hand.hpp"
 #include "Deck.hpp"
 #include "Table.hpp"
-#include "Round.hpp"
+#include "PlayState.hpp"
 #include "Debug.hpp"
 #include "AI.hpp"
 #include "Consumable.hpp"
 #include "Player.hpp"
 #include <memory>
 #include "GFX.hpp"
+#include "Button.hpp"
 using namespace std;
 using namespace sf;
 
@@ -24,123 +25,115 @@ bool debugMode = false;
 bool cheats = false;
 #endif
 
-enum Choice
+/*enum Choice
 {
 	PLAY,
 	PLAYMULTI,
 	DRAW,
 	INVALID,
 	BYPASS
-};
+};*/
+
+constexpr auto PLAYBTN = "play";
+constexpr auto DRAWBTN = "draw";
 
 int main()
 {
-	std::cout << "Deckerz v0\n";
+	std::cout << "Deckerz GUI v0\n";
 
 	// Graphics objects (oh boy)
-	RenderWindow window(VideoMode({1280, 720}), "Deckerz");
-	float x = 300.0, y = 300.0;
+	RenderWindow window(VideoMode({windowWidth, windowHeight}), "Deckerz GUI alpha 0");
 
-	// Game objects
-	Player player;
-	AI ai;
-	Deck playerDeck = Deck(PLAYER);
-	Deck aiDeck = Deck(OWNERAI);
-	Hand playerHand;
-	Hand aiHand;
-	Table pile;
-	Turn turn;
-	GameOver gameOver = NOTOVER;
-	int turnNr = 0;
-	int score = 0;
-	Bonuses bonuses;
-	Variables variables;
-	bool running = true;
-	
-	// GameState and Round creation
-	GameState gs{ playerDeck, aiDeck, playerHand, aiHand, pile, turn, gameOver, ai, score, bonuses, variables };
-	Round round = Round(gs);
-	Round::resetBonuses(gs);
+	sf::Texture bgTexture("Resources/bg.png");
+	sf::Sprite bpsprite(bgTexture);
+
+	Texture playBtnTexture("Resources/play.png");
+
+	sf::Vector2f pilePos = {windowWidth/2.f, windowHeight/2.f};
+	sf::Vector2f mousePos;
+
+	// MiddleCards
+	std::unordered_map<int, MiddleCard> middleCards; // Uses UCID as a key
+	vector<MiddleCard> selectedCards;
+	CardState state;
+	CardState pileState; pileState.selectable = false;
+
+	// Buttons
+	vector<Button> buttons;
+
+	// PlayState
+	PlayState ps;
+	ps.resetBonuses();
 
 	// Start of SFML window loop
 	while (window.isOpen())
 	{
+		// Other SFML stuff
+		mousePos = window.mapPixelToCoords(Mouse::getPosition(window));
+
+		// SFML events
 		while (const optional event = window.pollEvent())
 		{
 			if (event->is<sf::Event::Closed>())
                 window.close();
-		}
-
-		/*// Are we in a round?
-		if (round.isGameOver(gs) == NOTOVER)
-		{	
-			turnNr++;
 			
-			Debug::logTurn(gs);
-
-			if (turn == PLAYERTURN)
+			if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
 			{
-				Round::switchTurn(gs);
-				player.playTurn(gs);
-			}
-			else
-			{
-				Round::switchTurn(gs);
-				gs.ai.playTurn(gs);
+				if (keyPressed->scancode == sf::Keyboard::Scancode::D)
+					ps.pDraw();
 			}
 
-			if (gs.playerHand.getSize() >= 10)
+			if (const auto* mbPressed = event->getIf<sf::Event::MouseButtonPressed>())
 			{
-				gs.bonuses.comeback = true;
+				if (mbPressed->button == sf::Mouse::Button::Left)
+				{
+					for (auto& [ucid, middle] : middleCards) 
+					{
+						if (middle.sprite.getGlobalBounds().contains(mousePos) && !middle.state.selected && middle.state.selectable)
+							middle.state.selected = true;
+						else if (middle.sprite.getGlobalBounds().contains(mousePos))
+							middle.state.selected = false;
+					}
+				}
 			}
-
 		}
-		// If not, guess the round is over. (this is very bad, don't do this)
-		else
-		{
-			if (turnNr > 1) gs.bonuses.oneShotWonder = false;
-			if (turnNr > 5) gs.bonuses.speedster = false;
-
-			round.endRound(gs);
-
-			std::cout << "\nGame Over!\n";
-
-			switch (round.isGameOver(gs))
-			{
-			case NOTOVER:
-							std::cout << "! - Uhh... The game wasn't supposed to end...\n";
-							break;
-			case PLAYERWIN:
-							std::cout << "The Player wins!\n";
-							break;
-			case AIWIN:
-							std::cout << "The AI wins!\n";
-							break;
-			case NOPLAYERDECK:
-							std::cout << "The Player ran out of cards! AI wins!\n";
-							break;
-			case NOAIDECK:
-							std::cout << "The AI ran out of cards! Player wins!\n";
-							break;
-			default:
-							std::cout << "X - Garbage data in GameOver???\n";
-							break;
-			}
-
-			Round::calculateBonuses(gs);
-
-			std::cout << "Your score!" << std::endl;
-			std::cout << "=============================\n| " << gs.score << "|\n=============================\n";
-		}*/
 	
-		// GUI functions
-		window.clear(Color::Black);
+		// Drawing functions
+		window.clear();
+		window.draw(bpsprite);
 
-		for (int i = 0; i < gs.playerHand.getSize(); i++)
-			GFX::drawCard(gs.playerHand.getHand()[i], {x + i * 100, y}, NORMAL, window);
+		// Laying out the player's hand and adding each card to the visualData map
+		for (int i = 0; i < ps.getPHand().getHand().size(); i++)
+		{
+			auto emplacedSuccesfully = middleCards.try_emplace(ps.getPHand().getHand()[i]->getID(), GFX::layoutCard(ps.getPHand().getHand()[i], {GFX::calculateHandPos(ps.getPHand().getHand())[i], 600.f}, state));
+			auto existingState = emplacedSuccesfully.first->second.state;
+			if (!emplacedSuccesfully.second)
+				middleCards.insert_or_assign(ps.getPHand().getHand()[i]->getID(), GFX::layoutCard(ps.getPHand().getHand()[i], {GFX::calculateHandPos(ps.getPHand().getHand())[i], 600.f}, existingState));
+		}
+
+		// Laying out the pile card and adding it to the visualData map
+		middleCards.insert_or_assign(ps.getPile().getCard()->getID(), GFX::layoutCard(ps.getPile().getCard(), pilePos, pileState));
+
+		// Collision detection
+		for (auto& [ucid, middle] : middleCards) 
+		{
+			if (middle.sprite.getGlobalBounds().contains(mousePos)) middle.state.hovered = true;
+			else middle.state.hovered = false;
+		}
+
+		// Iterate over every middleCard and draw it
+		for (auto& [ucid, mC] : middleCards)
+		{
+			GFX::drawCard(mC, window);
+		}
+
+		for (auto& button : buttons)
+		{
+			
+		}
 
 		window.display();
-	
+
 	}
 
 	return 0;

@@ -1,7 +1,7 @@
 #include "Debug.hpp"
 #include "Table.hpp"
 #include "Hand.hpp"
-#include "Round.hpp"
+#include "PlayState.hpp"
 #include "AI.hpp"
 #include <iostream>
 
@@ -17,9 +17,9 @@ void Debug::toggleDebugMode()
 	}
 }
 
-void Debug::logTurn(GameState& gs)
+/*void Debug::logTurn(PlayState& ps)
 {
-	if (gs.turn == PLAYERTURN)
+	if (ps.getTurn() == PLAYERTURN)
 	{
 		log("i - It's the Player's turn.");
 	}
@@ -30,36 +30,36 @@ void Debug::logTurn(GameState& gs)
 	
 	std::cout << "\n";
 	
-	std::cout << "Pile card: "; gs.pile.getCard()->print();
+	std::cout << "Pile card: "; ps.getPile().getCard()->print();
 
 	std::cout << "\n";
 
 	if (cheats)
 	{
 		std::cout << "AI hand:\n";
-		for (int i = 0; i < gs.aiHand.getHand().size(); i++)
+		for (int i = 0; i < ps.getAHand().getHand().size(); i++)
 		{
-			gs.aiHand.getHand()[i]->print();
+			ps.getAHand().getHand()[i]->print();
 		}
 
 		std::cout << "\n";
 	}
 	else
 	{
-		std::cout << "AI has " << gs.aiHand.getSize() << " cards.\n";
+		std::cout << "AI has " << ps.getAHand().getSize() << " cards.\n";
 
 		std::cout << "\n";
 	}
 
 	std::cout << "Player hand:\n";
-	for (int i = 0; i < gs.playerHand.getHand().size(); i++)
+	for (int i = 0; i < ps.getPHand().getHand().size(); i++)
 	{
-		gs.playerHand.getHand()[i]->print();
+		ps.getPHand().getHand()[i]->print();
 	}
 
 	std::cout << "\n";
 }
-
+*/
 void Debug::log(std::string text1, std::string text2, std::string text3, std::string text4, std::string text5)
 {
 	if (debugMode) std::cout << text1 << text2 << text3 << text4 << text5 << std::endl;

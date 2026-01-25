@@ -9,7 +9,7 @@ private:
     std::vector<Trinket> trinketInventory;
     std::vector<Consumable> consumableInventory;
 public:
-    void playTurn(GameState& gs);
+    //void playTurn(PlayState& ps); // CLI bullshit, will be removed
 
     std::vector<Trinket> getTrinkets()const ;
     std::vector<Consumable> getConsumables() const;

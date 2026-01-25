@@ -1,45 +1,45 @@
 #include <random>
 #include <iostream>
-#include "Round.hpp"
+#include "PlayState.hpp"
 #include "Hand.hpp"
 #include "Chance.hpp"
 #include "Debug.hpp"
 
 
-Round::Round(GameState& gs)
+PlayState::PlayState() : playerDeck(PLAYER), aiDeck(OWNERAI), gameOver(NOTOVER), score(0)
 {
-	Debug::log("[Round.cpp] Starting round...");
+	Debug::log("[PlayState.cpp] Starting PlayState...");
 
 	// Shuffle decks
-	gs.playerDeck.shuffle();
-	gs.aiDeck.shuffle();
+	playerDeck.shuffle();
+	aiDeck.shuffle();
 
 	// Each player draws 5 cards
-	if (gs.playerDeck.getSize() < 1)
+	if (playerDeck.getSize() < 1)
 	{
 		gameOver = NOPLAYERDECK;
 	}
 	for (int i = 1; i <= 5; i++)
 	{
-		gs.playerHand.addCard(gs.playerDeck.draw());
-		gs.aiHand.addCard(gs.aiDeck.draw());
+		playerHand.addCard(playerDeck.draw());
+		aiHand.addCard(aiDeck.draw());
 	}
 
 	// Flip a coin to determine first-goer
-	if (Chance::chance(1, 2) == 1) gs.turn = PLAYERTURN;
-	else gs.turn = AITURN;
+	if (Chance::chance(1, 2) == 1) turn = PLAYERTURN;
+	else turn = AITURN;
 
 	// Draw a card to the pile
-	Debug::log("[Round.cpp] Drawing a card from the loser's deck...");
-	if (gs.turn == PLAYERTURN) gs.pile.addCard(gs.aiDeck.draw());
-	else gs.pile.addCard(gs.playerDeck.draw());
+	Debug::log("[PlayState.cpp] Drawing a card from the loser's deck...");
+	if (turn == PLAYERTURN) pile.addCard(aiDeck.draw());
+	else pile.addCard(playerDeck.draw());
 }
 
 // Deprecated
-// Turn Round::playTurn(Turn& turn)
+// Turn PlayState::playTurn(Turn& turn)
 /*{
-	if (turn) Debug::log("[Round.cpp] It's the AI's turn");
-	else Debug::log("[Round.cpp] It's the Player's turn");
+	if (turn) Debug::log("[PlayState.cpp] It's the AI's turn");
+	else Debug::log("[PlayState.cpp] It's the Player's turn");
 
 	//std::vector<Card>& hand = (turn == PLAYERTURN) ? pHand.getHand() : aHand.getHand();
 	const std::vector<std::shared_ptr<Card>>& hand = aHand.getHand();
@@ -126,21 +126,21 @@ Round::Round(GameState& gs)
 			}
 		}
 
-		Debug::log("[Round.cpp] AI's turn is over.");
+		Debug::log("[PlayState.cpp] AI's turn is over.");
 
 		return turn;
 	}
 }*/
 
-GameOver Round::isGameOver(GameState& gs)
+GameOver PlayState::isGameOver()
 {	
-	if (gs.gameOver == NOTOVER)
+	if (gameOver == NOTOVER)
 	{
-		if (gs.playerHand.getHand().size() == 0)
+		if (playerHand.getHand().size() == 0)
 		{
 			return PLAYERWIN;
 		}
-		else if (gs.aiHand.getHand().size() == 0)
+		else if (aiHand.getHand().size() == 0)
 		{
 			return AIWIN;
 		}
@@ -149,117 +149,117 @@ GameOver Round::isGameOver(GameState& gs)
 			return NOTOVER;
 		}
 	}
-	else return gs.gameOver;
+	else return gameOver;
 }
 
-void Round::endRound(GameState& gs)
+void PlayState::endRound()
 {
 	int kings = 0;
 	int jokers = 0;
 	
 	// Shuffle the cards in hand back into their respective decks
-	for (int i = gs.playerHand.getSize() - 1; i >= 0; i--)
+	for (int i = playerHand.getSize() - 1; i >= 0; i--)
 	{
-		gs.playerDeck.addCard(gs.playerHand.getHand()[i]);
+		playerDeck.addCard(playerHand.getHand()[i]);
 	}
-	gs.playerHand.getHand().clear();
+	playerHand.getHand().clear();
 	
-	for (int i = gs.aiHand.getSize() - 1; i >= 0; i--)
+	for (int i = aiHand.getSize() - 1; i >= 0; i--)
 	{
-		gs.aiDeck.addCard(gs.aiHand.getHand()[i]);
+		aiDeck.addCard(aiHand.getHand()[i]);
 	}
-	gs.aiHand.getHand().clear();
+	aiHand.getHand().clear();
 
 	// Checking for bonuses...
-	for (int i = 0; i < gs.pile.getPile().size(); i++)
+	for (int i = 0; i < pile.getPile().size(); i++)
 	{
-		if (gs.pile.getPile()[i]->getOwner() == PLAYER)
+		if (pile.getPile()[i]->getOwner() == PLAYER)
 		{
-			if (gs.pile.getPile()[i]->getRank() == 13) kings++;
-			if (gs.pile.getPile()[i]->getRank() == -1) jokers++;
+			if (pile.getPile()[i]->getRank() == 13) kings++;
+			if (pile.getPile()[i]->getRank() == -1) jokers++;
 		}
 	}
-	if (kings >= 4) gs.bonuses.royalty = true;
-	if (jokers >= 2) gs.bonuses.jokester = true;
+	if (kings >= 4) bonuses.royalty = true;
+	if (jokers >= 2) bonuses.jokester = true;
 
-	for (int i = 0; i < gs.pile.getPile().size(); i++)
+	for (int i = 0; i < pile.getPile().size(); i++)
 	{
-		if (gs.pile.getPile()[i]->getOwner() == PLAYER) gs.playerDeck.addCard(gs.pile.getPile()[i]);
-		else if (gs.pile.getPile()[i]->getOwner() == OWNERAI) gs.aiDeck.addCard(gs.pile.getPile()[i]);
+		if (pile.getPile()[i]->getOwner() == PLAYER) playerDeck.addCard(pile.getPile()[i]);
+		else if (pile.getPile()[i]->getOwner() == OWNERAI) aiDeck.addCard(pile.getPile()[i]);
 	}
 
 	// Clearing the pile and adding the cards back in their respective decks (check function)
-	gs.pile.clearPile(gs.playerDeck, gs.aiDeck);
+	pile.clearPile(playerDeck, aiDeck);
 }
 
-void Round::switchTurn(GameState& gs)
+void PlayState::switchTurn()
 {
-	if (gs.turn == PLAYERTURN) gs.turn = AITURN;
-	else gs.turn = PLAYERTURN;
+	if (turn == PLAYERTURN) turn = AITURN;
+	else turn = PLAYERTURN;
 }
 
-void Round::calculateBonuses(GameState& gs)
+void PlayState::calculateBonuses()
 {
 	std::cout << "=====================BREAKDOWN=====================" << std::endl;
 	
-	if (gs.variables.draws > 0)
+	if (variables.draws > 0)
 	{
-		gs.score += gs.variables.draws * 10;
-		std::cout << "+ " << gs.variables.draws * 10 << " - Drawn cards\n";
+		score += variables.draws * 10;
+		std::cout << "+ " << variables.draws * 10 << " - Drawn cards\n";
 	}
-	if (gs.variables.skips > 0)
+	if (variables.skips > 0)
 	{
-		gs.score += gs.variables.skips * 50;
-		std::cout << "+ " << gs.variables.skips * 50 << " - Skip cards\n";
+		score += variables.skips * 50;
+		std::cout << "+ " << variables.skips * 50 << " - Skip cards\n";
 	}
-	if (gs.variables.attacks > 0)
+	if (variables.attacks > 0)
 	{
-		gs.score += gs.variables.attacks * 10;
-		std::cout << "+ " << gs.variables.attacks * 10 << " - Attack cards\n";
+		score += variables.attacks * 10;
+		std::cout << "+ " << variables.attacks * 10 << " - Attack cards\n";
 	}
 
-	if (gs.gameOver == PLAYERWIN || gs.gameOver == NOAIDECK)
+	if (gameOver == PLAYERWIN || gameOver == NOAIDECK)
 	{
-		gs.score += 100;
+		score += 100;
 		std::cout << "+ 100 - Won!\n";
 	}
 
-	if (gs.bonuses.comeback)
+	if (bonuses.comeback)
 	{
-		gs.score += 75;
+		score += 75;
 		std::cout << "+ 75 - Comeback!\n";
 	}
-	if (gs.bonuses.jokester)
+	if (bonuses.jokester)
 	{
-		gs.score += 100;
+		score += 100;
 		std::cout << "+ 100 - Jokester!\n";
 	}
-	if (gs.bonuses.royalty)
+	if (bonuses.royalty)
 	{
-		gs.score += 200;
+		score += 200;
 		std::cout << "+ 200 - Royalty!\n";
 	}
-	if (gs.bonuses.noDraw)
+	if (bonuses.noDraw)
 	{
-		gs.score += 150;
+		score += 150;
 		std::cout << "+ 150 - No Deck Needed!\n";
 	}
-	if (gs.bonuses.oneManShow)
+	if (bonuses.oneManShow)
 	{
-		gs.score += 200;
+		score += 200;
 		std::cout << "+ 200 - One Man Show!?\n";
 	}
-	if (gs.bonuses.oneShotWonder)
+	if (bonuses.oneShotWonder)
 	{
-		gs.score += 300;
+		score += 300;
 		std::cout << "+ 300 - ONE SHOT WONDER!?\n";
 	}
-	if (!gs.bonuses.comeback &&
-		!gs.bonuses.jokester &&
-		!gs.bonuses.royalty &&
-		!gs.bonuses.noDraw &&
-		!gs.bonuses.oneManShow &&
-		!gs.bonuses.oneShotWonder)
+	if (!bonuses.comeback &&
+		!bonuses.jokester &&
+		!bonuses.royalty &&
+		!bonuses.noDraw &&
+		!bonuses.oneManShow &&
+		!bonuses.oneShotWonder)
 	{
 		std::cout << "No bonuses :(\n";
 	}
@@ -267,7 +267,34 @@ void Round::calculateBonuses(GameState& gs)
 	std::cout << "===================================================" << std::endl;
 }
 
-void Round::resetBonuses(GameState& gs) {
-	gs.bonuses = Bonuses();
-	gs.variables = Variables();
+void PlayState::resetBonuses() {
+	bonuses = Bonuses();
+	variables = Variables();
+}
+
+Deck& PlayState::getPDeck() { return playerDeck; }
+Deck& PlayState::getAIDeck() { return aiDeck; }
+Hand& PlayState::getPHand() { return playerHand; }
+Hand& PlayState::getAIHand() { return aiHand; }
+Table& PlayState::getPile() { return pile; }
+Turn& PlayState::getTurn() { return turn; }
+GameOver& PlayState::getGO() { return gameOver; }
+Player& PlayState::getPlayer() { return player; }
+AI& PlayState::getAI() { return ai; }
+int& PlayState::getScore() { return score; }
+Bonuses& PlayState::getBonuses() { return bonuses; }
+Variables& PlayState::getVars() { return variables; }
+
+void PlayState::pDraw()
+{
+	if (!(playerDeck.getSize() < 1))
+	{
+		playerHand.addCard(playerDeck.draw());
+		variables.draws++;
+		bonuses.noDraw = false;
+	}
+	else
+	{
+		gameOver = NOPLAYERDECK;
+	}
 }

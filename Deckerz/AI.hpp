@@ -24,7 +24,7 @@ private:
 	Difficulty difficulty = SMART;
 public:
 	void changeDifficulty(Difficulty difficulty);
-	void playTurn(GameState& gs);
+//	void playTurn(PlayState& ps);
 	Suit determineBestSuit();
 	Difficulty getDifficulty();
 	void smokeBomb();

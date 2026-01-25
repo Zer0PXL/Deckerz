@@ -8,7 +8,7 @@
 #include "Hand.hpp"
 #include "Deck.hpp"
 #include "Table.hpp"
-#include "Round.hpp"
+#include "PlayState.hpp"
 #include "Debug.hpp"
 #include "AI.hpp"
 #include "Consumable.hpp"
@@ -16,18 +16,15 @@ using namespace std;
 
 enum Choice
 {
-	PLAY,
 	PLAYMULTI,
 	DRAW,
 	INVALID,
 	BYPASS
 };
 
-void Player::playTurn(GameState& gs)
+/*void Player::playTurn(PlayState& ps)
 {
-	// THIS WHOLE BLOCK IS CLI!!!
-
-/*    // Player inputs
+    // Player inputs
 	Choice choice = INVALID;
 	std::vector<std::shared_ptr<Card>> multiPlay;
 	std::string stringInput = "";
@@ -54,22 +51,22 @@ void Player::playTurn(GameState& gs)
 				}
 				if (debugMode && stringInput == "difficulty=noai") 
 				{
-					gs.ai.changeDifficulty(NOAI);
+					ps.ai.changeDifficulty(NOAI);
 					choice = INVALID;
 				}
 				if (debugMode && stringInput == "difficulty=dumb") 
 				{
-					gs.ai.changeDifficulty(DUMB);
+					ps.ai.changeDifficulty(DUMB);
 					choice = INVALID;
 				}
 				if (debugMode && stringInput == "difficulty=smart") 
 				{
-					gs.ai.changeDifficulty(SMART);
+					ps.ai.changeDifficulty(SMART);
 					choice = INVALID;
 				}
 				if (debugMode && stringInput == "difficulty=cheater") 
 				{
-					gs.ai.changeDifficulty(CHEATER);
+					ps.ai.changeDifficulty(CHEATER);
 					choice = INVALID;
 				}
 				if (debugMode && stringInput == "logturn") 
@@ -79,7 +76,7 @@ void Player::playTurn(GameState& gs)
 				}
 				if (debugMode && stringInput == "iwinbtw")
 				{
-					gs.gameOver = PLAYERWIN;
+					ps.getGO() = PLAYERWIN;
 					choice = BYPASS;
 				}
 				if (debugMode && stringInput == "useMAGIC")
@@ -175,7 +172,7 @@ void Player::playTurn(GameState& gs)
 					else if (stringInput == "RIP") 
 					{
 						Consumable::useMAGIC(RIP, gs);
-						if (gs.playerHand.getSize() == 0)
+						if (ps.getPHand().getSize() == 0)
 						{
 							choice = BYPASS;
 						}
@@ -225,13 +222,13 @@ void Player::playTurn(GameState& gs)
 					do
 					{
 						std::cin >> intInput;
-						for (int i = 0; i < gs.playerHand.getSize(); i++)
+						for (int i = 0; i < ps.getPHand().getSize(); i++)
 						{
-							if (gs.playerHand.getHand()[i]->getID() == intInput)
+							if (ps.getPHand().getHand()[i]->getID() == intInput)
 							{
-								gs.playerHand.getHand()[i]->actAbility(gs);
-								gs.playerHand.getHand()[i]->actEnhancement(gs);
-								multiPlay.push_back(gs.playerHand.getHand()[i]);
+								ps.getPHand().getHand()[i]->actAbility(gs);
+								ps.getPHand().getHand()[i]->actEnhancement(gs);
+								multiPlay.push_back(ps.getPHand().getHand()[i]);
 
 								break;
 							}
@@ -240,7 +237,7 @@ void Player::playTurn(GameState& gs)
 
 					if (!multiPlay.empty())
 					{
-						gs.playerHand.playCards(multiPlay, gs);
+						ps.getPHand().playCards(multiPlay, gs);
 						playing = false;
 					}
 
@@ -248,15 +245,15 @@ void Player::playTurn(GameState& gs)
 
 					break;
 				case DRAW:
-					if (!(gs.playerDeck.getSize() < 1))
+					if (!(ps.playerDeck.getSize() < 1))
 					{
-						gs.playerHand.addCard(gs.playerDeck.draw());
-						gs.variables.draws++;
-						gs.bonuses.noDraw = false;
+						ps.getPHand().addCard(ps.playerDeck.draw());
+						ps.variables.draws++;
+						ps.getBonuses().noDraw = false;
 					}
 					else
 					{
-						gs.gameOver = NOPLAYERDECK;
+						ps.getGO() = NOPLAYERDECK;
 					}
 					playing = false;
 					break;
@@ -264,5 +261,5 @@ void Player::playTurn(GameState& gs)
 					playing = false;
 					break;
 				}
-			}*/
-}
+			}
+}*/

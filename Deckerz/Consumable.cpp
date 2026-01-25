@@ -1,5 +1,5 @@
 #include "Consumable.hpp"
-#include "Round.hpp"
+#include "PlayState.hpp"
 #include "Chance.hpp"
 #include "Debug.hpp"
 #include <iostream>
@@ -8,7 +8,7 @@ Consumable::Consumable(ConsumableType t, MAGIC m, ANTIMATTER am) : type(t), magi
 
 MAGIC lastUsedMAGIC = INVALIDMAGIC;
 
-void setEnhancement(Enhancement enhancement, int i, GameState& gs)
+void setEnhancement(Enhancement enhancement, int i, PlayState& ps)
 {
 	int intInput = 0;
 	bool foundIt = false;
@@ -19,13 +19,13 @@ void setEnhancement(Enhancement enhancement, int i, GameState& gs)
 		// CLI
 		//std::cin >> intInput;
 
-		for (int i = 0; i < gs.playerHand.getSize(); i++)
+		for (int i = 0; i < ps.getPHand().getSize(); i++)
 		{
-			if (gs.playerHand.getHand()[i]->getID() == intInput)
+			if (ps.getPHand().getHand()[i]->getID() == intInput)
 			{
-				gs.playerHand.getHand()[i]->setEnhancement(enhancement);
-				if (enhancement == SWORDEN || enhancement == SPEAREN) gs.playerHand.getHand()[i]->setAbility(DRAWABILITY);
-				if (enhancement == SHIELDEN) gs.playerHand.getHand()[i]->setAbility(SKIP);
+				ps.getPHand().getHand()[i]->setEnhancement(enhancement);
+				if (enhancement == SWORDEN || enhancement == SPEAREN) ps.getPHand().getHand()[i]->setAbility(DRAWABILITY);
+				if (enhancement == SHIELDEN) ps.getPHand().getHand()[i]->setAbility(SKIP);
 				foundIt = true;
 				break;
 			}
@@ -39,7 +39,7 @@ void setEnhancement(Enhancement enhancement, int i, GameState& gs)
 	}
 }
 
-void setSuit(Suit suit, int i, GameState& gs)
+void setSuit(Suit suit, int i, PlayState& ps)
 {
 	int intInput = 0;
 	bool foundIt = false;
@@ -50,11 +50,11 @@ void setSuit(Suit suit, int i, GameState& gs)
 		// CLI
 		//std::cin >> intInput;
 
-		for (int i = 0; i < gs.playerHand.getSize(); i++)
+		for (int i = 0; i < ps.getPHand().getSize(); i++)
 		{
-			if (gs.playerHand.getHand()[i]->getID() == intInput)
+			if (ps.getPHand().getHand()[i]->getID() == intInput)
 			{
-				gs.playerHand.getHand()[i]->setSuit(suit);
+				ps.getPHand().getHand()[i]->setSuit(suit);
 				foundIt = true;
 				break;
 			}
@@ -68,7 +68,7 @@ void setSuit(Suit suit, int i, GameState& gs)
 	}
 }
 
-void Consumable::useMAGIC(MAGIC magic, GameState& gs)
+/*void Consumable::useMAGIC(MAGIC magic, PlayState& ps)
 {
 	std::shared_ptr<Card> firstCard;
 	std::shared_ptr<Card> secondCard;
@@ -117,22 +117,22 @@ void Consumable::useMAGIC(MAGIC magic, GameState& gs)
 			// CLI
 			//std::cin >> intInput;
 
-			for (int i = 0; i < gs.playerHand.getSize(); i++)
+			for (int i = 0; i < ps.getPHand().getSize(); i++)
 			{
-				if (gs.playerHand.getHand()[i]->getID() == intInput)
+				if (ps.getPHand().getHand()[i]->getID() == intInput)
 				{
-					if (gs.playerHand.getHand()[i]->getRank() != 13)
+					if (ps.getPHand().getHand()[i]->getRank() != 13)
 					{
-						gs.playerHand.getHand()[i]->setRank(gs.playerHand.getHand()[i]->getRank() + 1);
+						ps.getPHand().getHand()[i]->setRank(ps.getPHand().getHand()[i]->getRank() + 1);
 					}
 					else
 					{
-						gs.playerHand.getHand()[i]->setRank(1);
+						ps.getPHand().getHand()[i]->setRank(1);
 					}
 
-					if (gs.playerHand.getHand()[i]->getEnhancement() == NONE)
+					if (ps.getPHand().getHand()[i]->getEnhancement() == NONE)
 					{
-						gs.playerHand.getHand()[i]->resetAbility();
+						ps.getPHand().getHand()[i]->resetAbility();
 					}
 
 					foundIt = true;
@@ -157,22 +157,22 @@ void Consumable::useMAGIC(MAGIC magic, GameState& gs)
 			// CLI
 			//std::cin >> intInput;
 
-			for (int i = 0; i < gs.playerHand.getSize(); i++)
+			for (int i = 0; i < ps.getPHand().getSize(); i++)
 			{
-				if (gs.playerHand.getHand()[i]->getID() == intInput)
+				if (ps.getPHand().getHand()[i]->getID() == intInput)
 				{
-					if (gs.playerHand.getHand()[i]->getRank() != 1)
+					if (ps.getPHand().getHand()[i]->getRank() != 1)
 					{
-						gs.playerHand.getHand()[i]->setRank(gs.playerHand.getHand()[i]->getRank() - 1);
+						ps.getPHand().getHand()[i]->setRank(ps.getPHand().getHand()[i]->getRank() - 1);
 					}
 					else
 					{
-						gs.playerHand.getHand()[i]->setRank(13);
+						ps.getPHand().getHand()[i]->setRank(13);
 					}
 
-					if (gs.playerHand.getHand()[i]->getEnhancement() == NONE)
+					if (ps.getPHand().getHand()[i]->getEnhancement() == NONE)
 					{
-						gs.playerHand.getHand()[i]->resetAbility();
+						ps.getPHand().getHand()[i]->resetAbility();
 					}
 
 					foundIt = true;
@@ -208,7 +208,7 @@ void Consumable::useMAGIC(MAGIC magic, GameState& gs)
 		std::cout << "Peek-a-boo! Here are the top three cards in your deck:\n";
 		for (int i = 1; i <= 3; i++)
 		{
-			gs.playerDeck.getDeck()[gs.playerDeck.getSize() - i]->print();
+			ps.playerDeck.getDeck()[ps.playerDeck.getSize() - i]->print();
 		}
 		lastUsedMAGIC = PEEKABOO;
 		break;
@@ -229,11 +229,11 @@ void Consumable::useMAGIC(MAGIC magic, GameState& gs)
 			// CLI
 			//std::cin >> intInput;
 
-			for (int i = 0; i < gs.playerHand.getSize(); i++)
+			for (int i = 0; i < ps.getPHand().getSize(); i++)
 			{
-				if (gs.playerHand.getHand()[i]->getID() == intInput)
+				if (ps.getPHand().getHand()[i]->getID() == intInput)
 				{
-					firstCard = gs.playerHand.getHand()[i];
+					firstCard = ps.getPHand().getHand()[i];
 					firstCardID = firstCard->getID();
 					foundIt = true;
 					break;
@@ -258,11 +258,11 @@ void Consumable::useMAGIC(MAGIC magic, GameState& gs)
 			// CLI
 			//std::cin >> intInput;
 
-			for (int i = 0; i < gs.playerHand.getSize(); i++)
+			for (int i = 0; i < ps.getPHand().getSize(); i++)
 			{
-				if (gs.playerHand.getHand()[i]->getID() == intInput)
+				if (ps.getPHand().getHand()[i]->getID() == intInput)
 				{
-					secondCard = gs.playerHand.getHand()[i];
+					secondCard = ps.getPHand().getHand()[i];
 					foundIt = true;
 					break;
 				}
@@ -287,11 +287,11 @@ void Consumable::useMAGIC(MAGIC magic, GameState& gs)
 			// CLI
 			//std::cin >> intInput;
 			
-			for (int i = 0; i < gs.playerHand.getSize(); i++)
+			for (int i = 0; i < ps.getPHand().getSize(); i++)
 			{
-				if (gs.playerHand.getHand()[i]->getID() == intInput)
+				if (ps.getPHand().getHand()[i]->getID() == intInput)
 				{
-					gs.playerHand.getHand().erase(gs.playerHand.getHand().begin() + i);
+					ps.getPHand().getHand().erase(ps.getPHand().getHand().begin() + i);
 					foundIt = true;
 					break;
 				}
@@ -315,22 +315,22 @@ void Consumable::useMAGIC(MAGIC magic, GameState& gs)
 		{
 			if (stringInput == "hearts")
 			{
-				gs.pile.addCard(std::make_shared<Card>(1, HEARTS, 0, NOOWNER, BASIC, NONE));
+				ps.getPile().addCard(std::make_shared<Card>(1, HEARTS, 0, NOOWNER, BASIC, NONE));
 				foundIt = true;
 			}
 			else if (stringInput == "spades")
 			{
-				gs.pile.addCard(std::make_shared<Card>(1, SPADES, 0, NOOWNER, BASIC, NONE));
+				ps.getPile().addCard(std::make_shared<Card>(1, SPADES, 0, NOOWNER, BASIC, NONE));
 				foundIt = true;
 			}
 			else if (stringInput == "diamonds")
 			{
-				gs.pile.addCard(std::make_shared<Card>(1, DIAMONDS, 0, NOOWNER, BASIC, NONE));
+				ps.getPile().addCard(std::make_shared<Card>(1, DIAMONDS, 0, NOOWNER, BASIC, NONE));
 				foundIt = true;
 			}
 			else if (stringInput == "clubs")
 			{
-				gs.pile.addCard(std::make_shared<Card>(1, CLUBS, 0, NOOWNER, BASIC, NONE));
+				ps.getPile().addCard(std::make_shared<Card>(1, CLUBS, 0, NOOWNER, BASIC, NONE));
 				foundIt = true;
 			}
 			else
@@ -357,7 +357,7 @@ void Consumable::useMAGIC(MAGIC magic, GameState& gs)
 		break;
 
 	case SMOKEBOMB:
-		gs.ai.smokeBomb();
+		ps.ai.smokeBomb();
 
 		lastUsedMAGIC = SMOKEBOMB;
 		break;
@@ -366,7 +366,7 @@ void Consumable::useMAGIC(MAGIC magic, GameState& gs)
 		std::cout << "X - That's not a real MAGIC card!";
 	}
 }
-
+*/
 std::string MAGICtoString(MAGIC card)
 {
 	switch (card)
