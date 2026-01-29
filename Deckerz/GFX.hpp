@@ -11,24 +11,22 @@ extern unsigned int windowHeight;
 // The possible states of a card. A card can be all states at a time.
 struct CardState
 {
+    bool played = false;
     bool disabled = false;
     bool flipped = false;
     bool selectable = true; bool selected = false;
     bool hovered = false;
 };
 
-// MiddleCard. It sits in between the LogicCard from Card.cpp and the Graphical Card, the one inaccessible by the program.
+// MiddleCard. It sits in between the Logic Card from Card.cpp and the Graphical Card, the one inaccessible by the program.
 // Its sole purpose is to connect the two.
 struct MiddleCard
 {
+    std::shared_ptr<Card> logicCard;
     sf::RectangleShape sprite; // Temporary
-
-    int ucid;
-    int rank;
-    int suit;
     CardState state;
 
-    MiddleCard(int ucid, sf::RectangleShape s, int cR, int cS, CardState st) : ucid(ucid), sprite(s), rank(cR), suit(cS), state(st) {};
+    MiddleCard(std::shared_ptr<Card> c, sf::RectangleShape s, CardState st) : logicCard(c), sprite(s), state(st) {};
 };
 
 class GFX

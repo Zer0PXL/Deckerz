@@ -25,7 +25,7 @@ MiddleCard GFX::layoutCard(std::shared_ptr<Card> card, sf::Vector2f position, Ca
     // replace this later with extracting the correct texture from the spritesheet
     sprite.setFillColor(sf::Color::White);
 
-    MiddleCard mC(card->getID(), sprite, card->getRank(), card->getSuit(), state);
+    MiddleCard mC(card, sprite, state);
     return mC;
 }
 
@@ -34,18 +34,18 @@ void GFX::drawCard(MiddleCard mC, sf::RenderWindow& window)
 {
     float OffsetY = 0;
 
-    cardRank.setString(std::to_string(mC.rank));
+    cardRank.setString(std::to_string(mC.logicCard->getRank()));
     cardRank.setCharacterSize(24);
     cardRank.setFillColor(sf::Color::Black);
     cardRank.setPosition({mC.sprite.getPosition().x - 60, mC.sprite.getPosition().y - 12});
 
-    if (mC.suit == HEARTS)
+    if (mC.logicCard->getSuit() == HEARTS)
         cardSuit.setString("of Hearts");
-    else if (mC.suit == SPADES)
+    else if (mC.logicCard->getSuit() == SPADES)
         cardSuit.setString("of Spades");
-    else if (mC.suit == DIAMONDS)
+    else if (mC.logicCard->getSuit() == DIAMONDS)
         cardSuit.setString("of Diamonds");
-    else if (mC.suit == CLUBS)
+    else if (mC.logicCard->getSuit() == CLUBS)
         cardSuit.setString("of Clubs");
     cardSuit.setFillColor(sf::Color::Black);
     cardSuit.setCharacterSize(24);
@@ -53,7 +53,7 @@ void GFX::drawCard(MiddleCard mC, sf::RenderWindow& window)
 
     if (debugMode)
     {
-        debugString = std::to_string(mC.ucid);
+        debugString = std::to_string(mC.logicCard->getID());
 
         if (!mC.state.selectable) debugString += " !selectable";
 

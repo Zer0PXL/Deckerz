@@ -5,6 +5,9 @@
 #include "Table.hpp"
 #include "AI.hpp"
 #include "Inventory.hpp"
+#include <unordered_map>
+#include "GFX.hpp"
+#include "UI.hpp"
 #include <memory>
 
 enum class Turn { Player, AI };
@@ -67,7 +70,16 @@ public:
 	void playerDraw();
 	void playerPlay(const std::vector<std::shared_ptr<Card>> cards);
 
+	// This function serves as a way for PlayState and UI to communicate with each other indirectly
+	// It returns bools to tell you if the Cards are legal or not
+	bool playMCs(std::unordered_map<int, MiddleCard> mCs);
+	// This function serves as a way for PlayState and UI to communicate with each other indirectly
+	// It returns bools to tell you if the Interactions are legal or not
+	bool PIHandler(Interactions interacts);
+
 	void aiPlay(const std::vector<std::shared_ptr<Card>> cards);
 	void aiTurn();
+
+	Snapshot snapshot();
 };
 

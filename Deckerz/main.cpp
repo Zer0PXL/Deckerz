@@ -14,6 +14,7 @@
 #include <memory>
 #include "GFX.hpp"
 #include "Button.hpp"
+#include "UI.hpp"
 using namespace std;
 using namespace sf;
 
@@ -25,32 +26,20 @@ bool debugMode = false;
 bool cheats = false;
 #endif
 
-constexpr auto PLAYBTN = "play";
-constexpr auto DRAWBTN = "draw";
-
 int main()
 {
 	std::cout << "Deckerz GUI v0\n";
 
-	// Graphics objects (oh boy)
+	// SFML graphics objects
 	RenderWindow window(VideoMode({windowWidth, windowHeight}), "Deckerz GUI alpha 0");
 
 	sf::Texture bgTexture("Resources/bg.png");
 	sf::Sprite bpsprite(bgTexture);
 
-	Texture playBtnTexture("Resources/play.png");
-
-	sf::Vector2f pilePos = {windowWidth/2.f, windowHeight/2.f};
 	sf::Vector2f mousePos;
 
-	// MiddleCards
-	std::unordered_map<int, MiddleCard> middleCards; // Uses UCID as a key
-	vector<MiddleCard> selectedCards;
-	CardState state;
-	CardState pileState; pileState.selectable = false; // The pile isn't selectable for obvious reasons.
-
-	// Buttons
-	vector<Button> buttons;
+	// My graphics objects
+	UI ui;
 
 	// State Manager
 	StateManager stateMan;
@@ -63,73 +52,31 @@ int main()
 	// Start of SFML window loop
 	while (window.isOpen())
 	{
-		// Other SFML stuff
-		mousePos = window.mapPixelToCoords(Mouse::getPosition(window));
+		// Initialize stuff
+		auto mousePos = window.mapPixelToCoords(Mouse::getPosition(window));
+		ui.resetInteracts();
+		ui.setMouse(mousePos);
 
 		// SFML events
-		while (const optional event = window.pollEvent())
-		{
-			if (event->is<sf::Event::Closed>())
-                window.close();
-			
-			if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
-			{
-				if (keyPressed->scancode == sf::Keyboard::Scancode::D)
-					ps.playerDraw();
-			}
+		while (const optional event = window.pollEvent()) ui.inputHandler(window, event);
+		ps.PIHandler(ui.getInteracts());
 
-			if (const auto* mbPressed = event->getIf<sf::Event::MouseButtonPressed>())
-			{
-				if (mbPressed->button == sf::Mouse::Button::Left)
-				{
-					for (auto& [ucid, middle] : middleCards) 
-					{
-						if (middle.sprite.getGlobalBounds().contains(mousePos) && !middle.state.selected && middle.state.selectable)
-							middle.state.selected = true;
-						else if (middle.sprite.getGlobalBounds().contains(mousePos))
-							middle.state.selected = false;
-					}
-				}
-			}
-		}
-	
-		// Drawing functions
+		// Clear window and draw background
 		window.clear();
 		window.draw(bpsprite);
 
-		// Laying out the player's hand and adding each card to the visualData map
-		for (int i = 0; i < ps.getPHand().getHand().size(); i++)
-		{
-			auto emplacedSuccesfully = middleCards.try_emplace(ps.getPHand().getHand()[i]->getID(), GFX::layoutCard(ps.getPHand().getHand()[i], {GFX::calculateHandPos(ps.getPHand().getHand())[i], 600.f}, state));
-			auto existingState = emplacedSuccesfully.first->second.state;
-			if (!emplacedSuccesfully.second)
-				middleCards.insert_or_assign(ps.getPHand().getHand()[i]->getID(), GFX::layoutCard(ps.getPHand().getHand()[i], {GFX::calculateHandPos(ps.getPHand().getHand())[i], 600.f}, existingState));
-		}
+		// Layout everything
+		Snapshot snapshot = ps.snapshot();
+		ui.layoutHandler(window, snapshot);
 
-		// Laying out the pile card and adding it to the visualData map
-		middleCards.insert_or_assign(ps.getPile().getCard()->getID(), GFX::layoutCard(ps.getPile().getCard(), pilePos, pileState));
+		// Check collision
+		ui.collisionHandler();
 
-		// Collision detection
-		for (auto& [ucid, middle] : middleCards) 
-		{
-			if (middle.sprite.getGlobalBounds().contains(mousePos)) middle.state.hovered = true;
-			else middle.state.hovered = false;
-		}
+		// Draw everything
+		ui.drawHandler(window);
 
-		// Iterate over every middleCard and draw it
-		for (auto& [ucid, mC] : middleCards)
-		{
-			GFX::drawCard(mC, window);
-		}
-
-		// Iterate over every button and draw it
-		for (auto& button : buttons)
-		{
-			
-		}
-
+		// Display
 		window.display();
-
 	}
 
 	return 0;

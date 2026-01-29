@@ -1,9 +1,10 @@
-#include <random>
 #include <iostream>
+#include <vector>
 #include "PlayState.hpp"
 #include "Hand.hpp"
 #include "Chance.hpp"
 #include "Debug.hpp"
+using namespace std;
 
 PlayState::PlayState() : playerDeck(PLAYER), aiDeck(OWNERAI), gameOver(GameOver::NotOver), score(0)
 {
@@ -454,6 +455,47 @@ void PlayState::playerPlay(const std::vector<std::shared_ptr<Card>> cards)
 	}
 }
 
+bool PlayState::playMCs(std::unordered_map<int, MiddleCard> mCs)
+{
+	std::vector<std::shared_ptr<Card>> lCs;
+
+	for (auto& mC : mCs)
+	{
+		lCs.push_back(mC.second.logicCard);
+	}
+
+	Debug::log("[PlayState.cpp] Checking each card if it's playable. If it isn't, I will bail.");
+	for (int i = 0; i < lCs.size(); i++)
+	{
+		if (!Card::isPlayable(lCs[i], pile.getCard()))
+		{
+			Debug::log("[PlayState.cpp] Illegal play! Bailing out!");
+			return false;
+		}
+	}
+
+	playerPlay(lCs);
+	return true;
+}
+
+bool PlayState::PIHandler(Interactions interacts)
+{
+	if (interacts.playerInteraction == PI::Draw)
+	{
+		Debug::log("[PlayState.cpp] Draw interaction received.");
+		playerDraw();
+		return true;
+	}
+	
+	else if (interacts.playerInteraction == PI::Play)
+	{
+		Debug::log("[PlayState.cpp] Play interaction received.");
+		return playMCs(interacts.playedCards);
+	}
+
+	else return true; // Let's just pretend everything else is fine (garbage included)
+}
+
 void PlayState::aiPlay(const std::vector<std::shared_ptr<Card>> cards)
 {
 	std::vector<std::shared_ptr<Card>> toPlay;
@@ -748,4 +790,14 @@ void PlayState::aiTurn()
 	}
 
 	std::cout << "============================\n" << "AI's turn is over\n" << "============================\n";
+}
+
+Snapshot PlayState::snapshot()
+{
+	Snapshot ss;
+
+	ss.pileCard = pile.getCard();
+	ss.playerHand = playerHand.getHand();
+
+	return ss;
 }
