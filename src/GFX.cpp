@@ -5,7 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 
-sf::Font font("Resources/ARIAL.TTF");
+sf::Font font("res/ARIAL.TTF");
 
 sf::RectangleShape sprite;
 sf::Text cardRank(font);

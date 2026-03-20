@@ -3,8 +3,8 @@ project(Deckerz LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB_RECURSE SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/Deckerz/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Deckerz/*.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp
 )
 add_executable(Deckerz ${SOURCES})
 target_compile_definitions(Deckerz PRIVATE $<$<CONFIG:Debug>:DEBUG>)
@@ -16,8 +16,8 @@ add_custom_command(
     TARGET Deckerz
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E remove_directory
-            "$<TARGET_FILE_DIR:Deckerz>/Resources"
+            "$<TARGET_FILE_DIR:Deckerz>/res"
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-            "${CMAKE_CURRENT_SOURCE_DIR}/Resources"
-            "$<TARGET_FILE_DIR:Deckerz>/Resources"
+            "${CMAKE_CURRENT_SOURCE_DIR}/res"
+            "$<TARGET_FILE_DIR:Deckerz>/res"
 )

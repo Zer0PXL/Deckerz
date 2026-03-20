@@ -4,7 +4,7 @@
 using namespace sf;
 using namespace std;
 
-sf::Texture playBtnTexture("Resources/play.png");
+sf::Texture playBtnTexture("res/play.png");
 
 void UI::setMouse(sf::Vector2f mPos)
 {
@@ -21,6 +21,12 @@ void UI::resetInteracts()
 Interactions UI::getInteracts()
 {
 	return interacts;
+}
+
+void UI::resetMCs()
+{
+	Debug::log("[UI.cpp] ! - Resetting middleCards...");
+	middleCards.clear();
 }
 
 Interactions UI::inputHandler(sf::RenderWindow& window, optional<Event> event)
@@ -79,6 +85,7 @@ void UI::layoutHandler(sf::RenderWindow& window, Snapshot snapshot)
 	CardState state;
 	CardState pileState; pileState.selectable = false; // The pile isn't selectable for obvious reasons.
 	sf::Vector2f pilePos = {windowWidth/2.f, windowHeight/2.f};
+	vector<shared_ptr<Card>> sorted = Hand::sortHand(snapshot.playerHand);
 
 	// Laying out the player's hand and adding each card to the middleCards map
 	for (int i = 0; i < snapshot.playerHand.size(); i++)

@@ -14,5 +14,6 @@ public:
 	void removeCard(std::shared_ptr<Card> card);
 	int getSize();
 	std::vector<std::shared_ptr<Card>>& getHand();
+	static std::vector<std::shared_ptr<Card>> sortHand(std::vector<std::shared_ptr<Card>> unsorted);
 };
 

@@ -42,6 +42,7 @@ public:
     void setMouse(sf::Vector2f mPos);
     void resetInteracts();
     Interactions getInteracts();
+    void resetMCs();
 
     Interactions inputHandler(sf::RenderWindow& window, std::optional<sf::Event> event);
     void layoutHandler(sf::RenderWindow& window, Snapshot snapshot);

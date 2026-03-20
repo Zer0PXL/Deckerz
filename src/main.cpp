@@ -33,7 +33,7 @@ int main()
 	// SFML graphics objects
 	RenderWindow window(VideoMode({windowWidth, windowHeight}), "Deckerz GUI alpha 0");
 
-	sf::Texture bgTexture("Resources/bg.png");
+	sf::Texture bgTexture("res/bg.png");
 	sf::Sprite bpsprite(bgTexture);
 
 	sf::Vector2f mousePos;
@@ -66,6 +66,7 @@ int main()
 		window.draw(bpsprite);
 
 		// Layout everything
+		if (ui.getInteracts().playerInteraction == PI::Play) ui.resetMCs();
 		Snapshot snapshot = ps.snapshot();
 		ui.layoutHandler(window, snapshot);
 

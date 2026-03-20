@@ -493,7 +493,13 @@ bool PlayState::PIHandler(Interactions interacts)
 		return playMCs(interacts.playedCards);
 	}
 
-	else return true; // Let's just pretend everything else is fine (garbage included)
+	else if (interacts.playerInteraction == PI::None) return true; // Bypass if no interaction
+
+	else
+	{
+		Debug::log("[PlayState.cpp] GARBAGE DATA IN PLAYERINTERACTION!?");
+		return false;
+	}
 }
 
 void PlayState::aiPlay(const std::vector<std::shared_ptr<Card>> cards)
@@ -582,15 +588,14 @@ void PlayState::aiTurn()
 		return;
 	}
 
-	// Purely for debug purposes
-	// Just plays the first legal card(s), if it can't play anything, just draw.
 	if (ai.getDifficulty() == Difficulty::NoAI)
 	{
+		// Purely for debug purposes
 		std::cout << "Nevermind! It's off!\n";
 	}
-	// Easy mode.
 	else if (ai.getDifficulty() == Difficulty::Dumb)
 	{
+		// Just plays the first legal card(s), if it can't play anything, just draw.
 		const std::vector<std::shared_ptr<Card>>& hand = aiHand.getHand();
 		std::vector<std::shared_ptr<Card>> playable;
 		std::vector<std::shared_ptr<Card>> multiPlayable;
@@ -699,7 +704,7 @@ void PlayState::aiTurn()
 		case CLUBS:
 			ai.setBest(ai.getClubs());
 			break;
-		// These are here because VSC doesn't have a ignore warning option...
+		// These are here because VSC doesn't have an ignore warning option...
 		case BLACKJOKER:
 			break;
 		case REDJOKER:
